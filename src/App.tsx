@@ -3,6 +3,7 @@ import { useAppData } from './state/derived'
 import { Today } from './screens/Today'
 import { Onboarding } from './screens/Onboarding'
 import { Stats } from './screens/Stats'
+import { Plan } from './screens/Plan'
 import { armReminder } from './reminders'
 import { cx } from './components/ui'
 
@@ -50,7 +51,8 @@ export default function App() {
       <main className="px-4 pb-28 safe-top">
         {tab === 'today' && <Today data={data} go={go} />}
         {tab === 'stats' && <Stats data={data} />}
-        {tab !== 'today' && tab !== 'stats' && <p className="pt-6 text-muted">Coming next.</p>}
+        {tab === 'plan' && <Plan data={data} />}
+        {(tab === 'songs' || tab === 'more') && <p className="pt-6 text-muted">Coming next.</p>}
       </main>
       <nav className="fixed bottom-0 inset-x-0 z-40 bg-bg/95 backdrop-blur border-t border-line safe-bottom">
         <div className="max-w-lg mx-auto grid grid-cols-5">
