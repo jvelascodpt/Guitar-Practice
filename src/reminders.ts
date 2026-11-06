@@ -26,7 +26,8 @@ export function reminderText(anchor: string) {
 export async function showReminder(settings: Settings) {
   if (!notificationsSupported() || Notification.permission !== 'granted') return
   const { title, body } = reminderText(settings.anchor)
-  const opts: NotificationOptions = { body, icon: '/pwa-192.png', badge: '/pwa-192.png', tag: 'daily-reminder' }
+  const icon = `${import.meta.env.BASE_URL}pwa-192.png`
+  const opts: NotificationOptions = { body, icon, badge: icon, tag: 'daily-reminder' }
   const reg = await navigator.serviceWorker?.getRegistration()
   if (reg) await reg.showNotification(title, opts)
   else new Notification(title, opts)
