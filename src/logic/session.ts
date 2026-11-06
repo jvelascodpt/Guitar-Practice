@@ -215,7 +215,7 @@ export function buildSession(input: BuildInput): BuiltSession {
       songId: nextQueued.id,
     })
   } else {
-    items.push({ id: 'learn-fallback', kind: 'song-learn', section: 'Songs', label: 'Song practice', detail: plan.songFallback, minutes: learnMin })
+    items.push({ id: 'learn-fallback', kind: 'song-learn', section: 'Songs', label: 'Strum-along', detail: plan.songFallback, minutes: learnMin })
   }
   if (extraReview) {
     items.push({
