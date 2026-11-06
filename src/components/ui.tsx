@@ -11,6 +11,7 @@ type BtnProps = ButtonHTMLAttributes<HTMLButtonElement> & { variant?: 'primary' 
 export function Button({ variant = 'secondary', size = 'md', className, ...rest }: BtnProps) {
   return (
     <button
+      type="button"
       {...rest}
       className={cx(
         'inline-flex items-center justify-center gap-2 rounded-xl font-semibold transition active:scale-[0.98] disabled:opacity-40 disabled:pointer-events-none',
@@ -30,7 +31,9 @@ export function Button({ variant = 'secondary', size = 'md', className, ...rest 
 export function Chip({ active, children, onClick }: { active?: boolean; children: ReactNode; onClick?: () => void }) {
   return (
     <button
+      type="button"
       onClick={onClick}
+      aria-pressed={active}
       className={cx(
         'shrink-0 rounded-full px-3 py-1.5 text-sm font-medium border transition',
         active ? 'bg-accent text-accent-ink border-accent' : 'bg-surface-2 text-muted border-line',
