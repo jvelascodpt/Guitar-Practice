@@ -6,7 +6,15 @@
 Beginner electric guitarist starting Nov 2026. Goal: practice ~25 min/day, 5–6 days/week for 12 months, learn 12–25 songs, and be able to improvise over a blues/pentatonic jam by Oct 2027. I'm a physical therapist, so I care about wrist/forearm load — the app should encourage short daily sessions, not marathons.
 
 ## Song preferences
-TBD — artists, genres, dream songs, and things to avoid come in a later message. For now the library has its structure and ~10 generic beginner-friendly rock/pop songs as placeholders, clearly tagged "placeholder" so they can be replaced. Target mix once preferences arrive: ~70% easy (open/power chords, playable in weeks 1–20), ~30% stretch (barre chords, riffs, a solo), ordered to match the plan below.
+Artists (given Nov 2026): Martin Garrix, John Summit, John Mayer, Bruno Mars, Justin Bieber, Alesso, Calvin Harris, it's murph.
+Mostly EDM/dance-pop, plus John Mayer for the blues/solo side. Things to avoid: none given yet.
+
+How the library uses them (14 songs, 10 easy / 4 stretch, ordered to the plan; see `SONGS` in `src/data/seed.ts`):
+- EDM tracks have little or no real guitar, so they're played as their 4-chord loop plus the synth hook as a single-note riff. Loops are great early material; the July ear-training songs (John Summit, it's murph) have no tabs on purpose.
+- John Mayer carries the stretch work: Gravity (rhythm in Jan, first solo in May) and Slow Dancing in a Burning Room (barre rhythm in Apr, C#m pentatonic solo in Jun).
+- Songs with an F before April use Fmaj7 (x x 3 2 1 0) until barre month.
+- Several community chord sheets disagree (Scared to Be Lonely, Locked Out of Heaven); those songs carry a "check against the recording" note.
+- Goal is 15 songs by Oct, so there is room for one or more additions.
 
 ## Stack
 React + Vite + TypeScript, Tailwind, Dexie (IndexedDB) for local-first data, vite-plugin-pwa for offline + home-screen install. Keep a clean data layer so a Supabase sync adapter can be added later without rewriting. Dark mode default, mobile-first, fast on a phone.

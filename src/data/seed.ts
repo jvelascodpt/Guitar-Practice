@@ -258,32 +258,47 @@ export const WARMUPS: { name: string; from: number; bpm?: number }[] = [
   { name: 'String skipping on the box', from: 8, bpm: 80 },
 ]
 
-const yt = (q: string) => `https://www.youtube.com/results?search_query=${encodeURIComponent(q + ' guitar lesson')}`
+const lesson = (q: string) => `https://www.youtube.com/results?search_query=${encodeURIComponent(q + ' guitar lesson')}`
+const chordsSearch = (q: string) => `https://www.ultimate-guitar.com/search.php?search_type=title&value=${encodeURIComponent(q)}`
+const listen = (q: string) => `https://www.youtube.com/results?search_query=${encodeURIComponent(q)}`
 
-type SongSeed = Pick<Song, 'title' | 'artist' | 'difficulty' | 'chords' | 'techniques' | 'tier' | 'targetMonth' | 'notes'>
+type SongSeed = Pick<Song, 'title' | 'artist' | 'difficulty' | 'chords' | 'techniques' | 'tier' | 'targetMonth' | 'notes' | 'tags' | 'link'>
 
-/** Placeholder library: 7 easy / 3 stretch, ordered to match the plan. Replace once song preferences are in. */
-const SONGS: SongSeed[] = [
-  { title: 'Wild Thing', artist: 'The Troggs', difficulty: 1, chords: ['A', 'D', 'E'], techniques: ['Open chords', 'Downstrokes'], tier: 'easy', targetMonth: 1, notes: 'Uses November’s chords.' },
-  { title: 'A Horse with No Name', artist: 'America', difficulty: 1, chords: ['Em', 'D6/9'], techniques: ['Two-chord strumming'], tier: 'easy', targetMonth: 1, notes: '' },
-  { title: 'Knockin’ on Heaven’s Door', artist: 'Bob Dylan', difficulty: 1, chords: ['G', 'D', 'Am', 'C'], techniques: ['Open chords', 'Strumming'], tier: 'easy', targetMonth: 1, notes: '' },
-  { title: 'Bad Moon Rising', artist: 'Creedence Clearwater Revival', difficulty: 2, chords: ['D', 'A', 'G'], techniques: ['Strumming pattern'], tier: 'easy', targetMonth: 2, notes: '' },
-  { title: 'Brown Eyed Girl', artist: 'Van Morrison', difficulty: 2, chords: ['G', 'C', 'D', 'Em'], techniques: ['Strumming pattern', 'Chord changes'], tier: 'easy', targetMonth: 2, notes: '' },
-  { title: 'Seven Nation Army', artist: 'The White Stripes', difficulty: 1, chords: [], techniques: ['Single-note riff'], tier: 'easy', targetMonth: 3, notes: '' },
-  { title: 'Smells Like Teen Spirit', artist: 'Nirvana', difficulty: 2, chords: ['F5', 'B♭5', 'A♭5', 'D♭5'], techniques: ['Power chords', 'Muted strums'], tier: 'easy', targetMonth: 3, notes: '' },
-  { title: 'Creep', artist: 'Radiohead', difficulty: 3, chords: ['G', 'B', 'C', 'Cm'], techniques: ['Barre chords'], tier: 'stretch', targetMonth: 5, notes: '' },
-  { title: 'Wish You Were Here (intro solo)', artist: 'Pink Floyd', difficulty: 3, chords: ['Em', 'G', 'A'], techniques: ['Bends', 'Hammer-ons', 'Solo'], tier: 'stretch', targetMonth: 6, notes: '' },
-  { title: 'Sunshine of Your Love', artist: 'Cream', difficulty: 3, chords: ['D', 'C', 'A', 'G'], techniques: ['Riff', 'Pentatonic'], tier: 'stretch', targetMonth: 8, notes: '' },
+const F_TIP = 'Until barre month (April), play Fmaj7 (x x 3 2 1 0) wherever the sheet says F.'
+const CHECK = 'Chord sheets for this one disagree; check against the recording.'
+
+/**
+ * Library built from the user's artists (Nov 2026): 10 easy / 4 stretch, ordered to match the plan.
+ * EDM tracks are played as their chord loop + the synth hook as a single-note riff.
+ */
+export const SONGS: SongSeed[] = [
+  // Dec: open chords, first 2 songs
+  { title: 'Heroes (We Could Be)', artist: 'Alesso ft. Tove Lo', difficulty: 1, chords: ['Am', 'G', 'C'], techniques: ['Capo 5', '3-chord loop', 'Downstrokes'], tier: 'easy', targetMonth: 1, tags: ['edm'], notes: 'Capo 5. Three chords on repeat; a good first song.', link: chordsSearch('Heroes We Could Be Alesso') },
+  { title: 'Feel So Close', artist: 'Calvin Harris', difficulty: 1, chords: ['Am', 'Em', 'G', 'C'], techniques: ['4-chord loop', 'Strumming'], tier: 'easy', targetMonth: 1, tags: ['edm'], notes: 'No capo. Strum the loop first; the single-note intro riff makes a fun extra later.', link: chordsSearch('Feel So Close Calvin Harris') },
+  // Jan: rhythm & strumming, 5 songs in rotation
+  { title: 'Count On Me', artist: 'Bruno Mars', difficulty: 2, chords: ['C', 'Em', 'Am', 'G', 'F', 'Dm'], techniques: ['Strumming pattern', 'Chord changes'], tier: 'easy', targetMonth: 2, tags: ['pop'], notes: `Key of C, no capo. ${F_TIP}`, link: chordsSearch('Count On Me Bruno Mars') },
+  { title: 'Love Yourself', artist: 'Justin Bieber', difficulty: 2, chords: ['C', 'G', 'Am', 'F'], techniques: ['Capo 4', 'Strumming'], tier: 'easy', targetMonth: 2, tags: ['pop'], notes: `Capo 4, easy-shapes version. ${F_TIP}`, link: chordsSearch('Love Yourself Justin Bieber') },
+  { title: 'Gravity (rhythm part)', artist: 'John Mayer', difficulty: 2, chords: ['G', 'C', 'Am', 'D7'], techniques: ['6/8 feel', 'Slow strumming'], tier: 'easy', targetMonth: 2, tags: ['blues'], notes: 'Mostly G and C at a slow 6/8 sway. Learn this before the solo in May.', link: lesson('Gravity John Mayer') },
+  { title: 'Scared to Be Lonely', artist: 'Martin Garrix & Dua Lipa', difficulty: 2, chords: ['F', 'Am', 'G', 'Em'], techniques: ['Capo 4', '4-chord loop'], tier: 'easy', targetMonth: 2, tags: ['edm'], notes: `Capo 4 version. ${F_TIP} ${CHECK}`, link: chordsSearch('Scared to Be Lonely Martin Garrix') },
+  // Feb: muting & riffs
+  { title: 'Uptown Funk', artist: 'Mark Ronson ft. Bruno Mars', difficulty: 2, chords: ['Dm7', 'G7'], techniques: ['Funk muting', 'Short chord stabs'], tier: 'easy', targetMonth: 3, tags: ['pop', 'funk'], notes: 'Two chords; the groove is the hard part. Play the stabs short and mute in between.', link: lesson('Uptown Funk Mark Ronson Bruno Mars') },
+  { title: 'Animals (lead riff)', artist: 'Martin Garrix', difficulty: 2, chords: [], techniques: ['Single-note riff', 'Palm muting'], tier: 'easy', targetMonth: 3, tags: ['edm'], notes: 'The synth hook arranged for guitar. Slow it right down, then build to tempo.', link: lesson('Animals Martin Garrix') },
+  { title: 'Locked Out of Heaven', artist: 'Bruno Mars', difficulty: 3, chords: ['D', 'G', 'Em', 'A'], techniques: ['Capo 3', 'Syncopated upstrokes', 'Muting'], tier: 'stretch', targetMonth: 3, tags: ['pop'], notes: `Reggae-rock rhythm in the style of The Police. Capo 3 version. ${CHECK}`, link: chordsSearch('Locked Out of Heaven Bruno Mars') },
+  // Apr–Jun: barre chords, first solo, pentatonic
+  { title: 'Slow Dancing in a Burning Room (rhythm)', artist: 'John Mayer', difficulty: 4, chords: ['C#m', 'A', 'E', 'B'], techniques: ['Barre chords', 'Dynamics'], tier: 'stretch', targetMonth: 5, tags: ['blues'], notes: 'Original-key barre version for barre month. Many tabs also show a capo 4 version.', link: lesson('Slow Dancing in a Burning Room John Mayer') },
+  { title: 'Gravity (solo)', artist: 'John Mayer', difficulty: 4, chords: [], techniques: ['Bends', 'Vibrato', 'G major pentatonic'], tier: 'stretch', targetMonth: 6, tags: ['blues'], notes: 'Your first solo note for note. Slow and bendy, so tone beats speed. Aim for 75% tempo.', link: lesson('Gravity John Mayer solo') },
+  { title: 'Slow Dancing in a Burning Room (solo)', artist: 'John Mayer', difficulty: 4, chords: [], techniques: ['C#m pentatonic, positions 1–2', 'Bends'], tier: 'stretch', targetMonth: 7, tags: ['blues'], notes: 'Uses the same pentatonic positions as June’s plan.', link: lesson('Slow Dancing in a Burning Room solo') },
+  // Jul: ear training
+  { title: 'Where You Are', artist: 'John Summit & Hayla', difficulty: 2, chords: [], techniques: ['By ear', 'Chord loop', 'Vocal hook'], tier: 'easy', targetMonth: 8, tags: ['edm', 'by ear'], notes: 'Ear-training song: find the chord loop and the vocal hook yourself. (The Zedd remix chord sheet is in A minor.)', link: listen('John Summit Hayla Where You Are') },
+  { title: 'Food for the Soul', artist: 'it’s murph', difficulty: 2, chords: [], techniques: ['By ear', 'Synth hook as a riff'], tier: 'easy', targetMonth: 8, tags: ['edm', 'by ear'], notes: 'Ear-training song: no tabs exist, so work out the main melody one string at a time.', link: listen('its murph Food for the Soul') },
 ]
 
-export function seedSongs(now = Date.now()): Song[] {
+export function seedSongs(now = Date.now(), startOrder = 1): Song[] {
   return SONGS.map((x, i) => ({
     ...x,
-    id: `seed-song-${i + 1}`,
+    id: `seed-v2-${i + 1}`,
     status: 'queued',
-    link: yt(`${x.title} ${x.artist}`),
-    tags: ['placeholder'],
-    order: i + 1,
+    order: startOrder + i,
     createdAt: now,
     updatedAt: now,
   }))

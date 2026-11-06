@@ -20,6 +20,19 @@ export class GuitarDB extends Dexie {
       recordings: 'id, monthKey, date, updatedAt',
       deletions: 'id, table, deletedAt',
     })
+    // v2: swap the original placeholder songs for the user's library. Placeholders
+    // the user has touched (status changed or edited) are kept.
+    this.version(2)
+      .stores({})
+      .upgrade(async (tx) => {
+        const songs = tx.table<Song, string>('songs')
+        const now = Date.now()
+        const stale = await songs.filter((s) => s.id.startsWith('seed-song-') && s.status === 'queued' && s.updatedAt === s.createdAt).toArray()
+        await songs.bulkDelete(stale.map((s) => s.id))
+        await tx.table('deletions').bulkPut(stale.map((s) => ({ id: `songs:${s.id}`, table: 'songs', recordId: s.id, deletedAt: now })))
+        const maxOrder = (await songs.toArray()).reduce((m, s) => Math.max(m, s.order), 0)
+        await songs.bulkAdd(seedSongs(now, maxOrder + 1))
+      })
     this.on('populate', (tx) => {
       const now = Date.now()
       tx.table('settings').add(defaultSettings(now))
