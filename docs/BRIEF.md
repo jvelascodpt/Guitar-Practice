@@ -1,0 +1,55 @@
+# PROJECT: Guitar Year — practice consistency PWA
+
+> Saved project brief, used as context for future sessions. Edit it when the plan changes.
+
+## Who I am
+Beginner electric guitarist starting Nov 2026. Goal: practice ~25 min/day, 5–6 days/week for 12 months, learn 12–25 songs, and be able to improvise over a blues/pentatonic jam by Oct 2027. I'm a physical therapist, so I care about wrist/forearm load — the app should encourage short daily sessions, not marathons.
+
+## Song preferences
+TBD — artists, genres, dream songs, and things to avoid come in a later message. For now the library has its structure and ~10 generic beginner-friendly rock/pop songs as placeholders, clearly tagged "placeholder" so they can be replaced. Target mix once preferences arrive: ~70% easy (open/power chords, playable in weeks 1–20), ~30% stretch (barre chords, riffs, a solo), ordered to match the plan below.
+
+## Stack
+React + Vite + TypeScript, Tailwind, Dexie (IndexedDB) for local-first data, vite-plugin-pwa for offline + home-screen install. Keep a clean data layer so a Supabase sync adapter can be added later without rewriting. Dark mode default, mobile-first, fast on a phone.
+
+## Features
+1. Today: a pre-built session checklist (5 min warm-up / 10 min skill of the month / 10 min songs), built-in timer + metronome, one tap to mark the day done.
+2. Streaks & stats: current/longest streak, calendar heatmap, minutes/week, days practiced per month.
+3. Plan: one card per month (below) with the focus, a measurable goal, and weekly checkboxes.
+4. Song library: title, artist, difficulty 1–5, status (queued / learning / can play / polished), chords/techniques, link to tab/video, notes. Filter by status and difficulty.
+5. Recordings log: one entry per month with a note and optional local audio file, to compare progress.
+6. Backup: export/import all data as JSON.
+7. Daily reminder via Web Notifications at a time I set (where supported).
+
+## Retention design (evidence-based; build these in)
+1. Zero-decision sessions: Today always shows a pre-built session. I never choose what to practice; I press start.
+2. Minimum viable session: a 5-minute "bad day" mode that still counts for the streak. Streaks reward showing up, not minutes.
+3. Consistency over intensity: cap sessions at 30 min by default with a gentle "that's enough for today." Weekly target = days practiced, not total minutes.
+4. Interleaved practice: a new skill gets 3–5 min blocked time for its first 3 days, then rotates into 2–3 min slices mixed with other items.
+5. Daily win: every session ends with 5 min of a song I can already play. Never end a session on a hard item.
+6. Spaced retrieval: songs marked "can play" come back on a schedule (2 days, 1 week, 2 weeks, 1 month). Missed = reschedule sooner, no shame.
+7. Danger-zone support: in months with known quit points (barre chords, first solo), auto-shorten technique blocks to 3–5 min and add an extra song slot.
+8. Visible progress: monthly recording prompt + compare-to-last-month view; "songs I can play" count on the home screen.
+9. Habit anchoring: onboarding asks for a trigger ("after coffee") and reminder time; reminder text references the anchor.
+10. Streak repair: one free "streak freeze" per week so a missed day doesn't reset to zero.
+11. Pain check: optional 1-tap "hand/forearm felt" rating after sessions; if sore 2 days in a row, halve technique time for 3 days.
+12. Plateau nudge: if a song sits at "learning" for 4+ weeks, suggest dropping to rhythm-only or swapping it.
+
+## 12-month plan (seeds the Plan cards)
+- **Nov 2026 – Setup & first chords.** Tune, pick grip, clean single notes; Em Am E A D; timed chord-change drills. Goal: 3 chords changed cleanly at 60 bpm.
+- **Dec – Open chord vocabulary.** Add G C Dm; downstroke strumming with metronome; first 2 songs. Goal: one song start to finish without stopping.
+- **Jan 2027 – Rhythm & strumming.** Up/down patterns, muting, counting 8ths; finger-independence warm-ups. Goal: 5 songs in rotation, changes at 80 bpm.
+- **Feb – Power chords & palm muting.** Root-5/root-6 shapes, sliding, palm muting with gain; 2 rock riffs. Goal: one riff clean at tempo.
+- **Mar – Minor pentatonic position 1.** A minor box, alternate picking, play over backing track, first bends. Goal: scale clean at 100 bpm 8ths; first 4-bar solo.
+- **Apr – Barre chords.** F and B shapes, short frequent reps to build strength safely; transpose a known song. Goal: F major rings clean 8/10 times.
+- **May – Expression.** Vibrato, in-tune bends, hammer-ons/pull-offs; first solo note-for-note. Goal: the solo at 75% tempo.
+- **Jun – Connecting the neck.** Pentatonic positions 2–3, shifting; 12-bar blues, shuffle feel. Goal: improvise 12 bars without stopping.
+- **Jul – Ear training & songs.** 3 riffs by ear; 2 full songs with chords + lead. Goal: 10-song repertoire.
+- **Aug – Technique push.** Metronome speed work (+2–3 bpm/day), string skipping, arpeggios; major scale/CAGED basics. Goal: pentatonic at 140 bpm 8ths.
+- **Sep – Tone & gear.** Amp gain staging/EQ, clean vs crunch, try pedals; record with backing track and compare to Nov. Goal: a 1-minute clip I'm proud of.
+- **Oct – Perform & plan year 2.** Play for someone or post a clip; choose next direction. Goal: 15 songs, one solo at full speed, confident improv.
+
+Every month: record one clip, keep the song list current, and back off intensity for a few days if the fretting hand/forearm hurts.
+
+## Working agreement
+- Build order: scaffold → data model + PWA + seed → Today → Streaks → Plan → Songs → Recordings / Backup / Reminder.
+- Ask before adding anything beyond this scope.
