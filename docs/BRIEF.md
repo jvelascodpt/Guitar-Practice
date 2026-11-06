@@ -53,3 +53,14 @@ Every month: record one clip, keep the song list current, and back off intensity
 ## Working agreement
 - Build order: scaffold → data model + PWA + seed → Today → Streaks → Plan → Songs → Recordings / Backup / Reminder.
 - Ask before adding anything beyond this scope.
+
+## Implementation notes (decisions made while building)
+- Session builder introduces the month's skills one at a time (roughly every 3 practice days). A new skill gets a 4-min blocked slot (3 min in danger-zone months) for 3 practice days, then rotates into 2–3 min slices. In week 1 of the plan there's nothing older to interleave yet, so sessions run ~20 min.
+- Danger zones: April (barre chords) and May (first solo). Technique drops 10 → 6 min, plus a 4-min extra song slot.
+- Streak freeze is automatic: the first missed day in each Monday–Sunday week is covered. Today never breaks a streak.
+- Spaced reviews: "Solid" on time → next interval; "Solid" but overdue → same interval again (sooner); "Shaky" → one step back.
+- Pain check: Fine / Tight / Sore. Two "Sore" days in a row → technique halved for the next 3 days.
+- Plateau nudge (4+ weeks in learning): rhythm-only, swap for the next queued song, or keep going (snoozes 2 weeks).
+- Songs start automatically: the first queued song whose plan month has arrived shows up as "Start: …" in Today; finishing it moves it to learning (max 2 learning).
+- Reminders: browsers can't schedule exact-time notifications without a push server, so the reminder fires while the app is open/alive, and catches up on open if you haven't practiced. One per day.
+- Weekly checkpoint wording in the Plan cards was written to break each month's goal into 4 steps; edit freely.

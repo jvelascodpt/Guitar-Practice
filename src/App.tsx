@@ -5,6 +5,7 @@ import { Onboarding } from './screens/Onboarding'
 import { Stats } from './screens/Stats'
 import { Plan } from './screens/Plan'
 import { Songs } from './screens/Songs'
+import { More } from './screens/More'
 import { armReminder } from './reminders'
 import { cx } from './components/ui'
 
@@ -54,7 +55,7 @@ export default function App() {
         {tab === 'stats' && <Stats data={data} />}
         {tab === 'plan' && <Plan data={data} />}
         {tab === 'songs' && <Songs data={data} />}
-        {tab === 'more' && <p className="pt-6 text-muted">Coming next.</p>}
+        {tab === 'more' && <More data={data} />}
       </main>
       <nav className="fixed bottom-0 inset-x-0 z-40 bg-bg/95 backdrop-blur border-t border-line safe-bottom">
         <div className="max-w-lg mx-auto grid grid-cols-5">

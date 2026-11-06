@@ -55,7 +55,12 @@ function slices(total: number, maxCount: number): number[] {
   const base = Math.floor(total / count)
   const out = Array(count).fill(Math.min(3, base))
   let left = total - out.reduce((a, b) => a + b, 0)
-  for (let i = 0; i < count && left > 0; i++) if (out[i] < 3) (out[i]++, left--)
+  for (let i = 0; i < count && left > 0; i++) {
+    if (out[i] < 3) {
+      out[i]++
+      left--
+    }
+  }
   return out
 }
 

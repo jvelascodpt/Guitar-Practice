@@ -19,7 +19,10 @@ export function Stats({ data }: { data: AppData }) {
       let days = 0
       for (let d = 0; d < 7; d++) {
         const s = byDate.get(addDays(start, d))
-        if (s) (min += s.minutes, days++)
+        if (s) {
+          min += s.minutes
+          days++
+        }
       }
       return { key: start, label: `${Number(start.slice(5, 7))}/${Number(start.slice(8))}`, value: min, detail: `Week of ${shortDate(start)}: ${min} min · ${days} day${days === 1 ? '' : 's'}` }
     })
