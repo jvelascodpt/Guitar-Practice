@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useAppData } from './state/derived'
 import { Today } from './screens/Today'
 import { Onboarding } from './screens/Onboarding'
@@ -8,6 +8,10 @@ import { Songs } from './screens/Songs'
 import { More } from './screens/More'
 import { armReminder } from './reminders'
 import { cx } from './components/ui'
+import { IntroClip } from './components/IntroClip'
+
+// Respect the OS 'reduce motion' setting: skip the intro clip entirely.
+const reducedMotion = typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches
 
 export type Tab = 'today' | 'stats' | 'plan' | 'songs' | 'more'
 const TABS: { id: Tab; label: string; icon: string }[] = [
@@ -26,6 +30,8 @@ const readHash = (): Tab => {
 export default function App() {
   const data = useAppData()
   const [tab, setTab] = useState<Tab>(readHash)
+  const [introDone, setIntroDone] = useState(reducedMotion)
+  const endIntro = useCallback(() => setIntroDone(true), [])
   const { settings, todaySession } = data
 
   useEffect(() => {
@@ -50,6 +56,7 @@ export default function App() {
 
   return (
     <div className="min-h-dvh max-w-lg mx-auto">
+      {!introDone && settings!.introClip !== false && <IntroClip onDone={endIntro} />}
       <main className="px-4 pb-28 safe-top">
         {tab === 'today' && <Today data={data} go={go} />}
         {tab === 'stats' && <Stats data={data} />}

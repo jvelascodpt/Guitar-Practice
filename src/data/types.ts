@@ -116,6 +116,8 @@ export interface Settings {
   sessionCapMinutes: number
   weeklyTargetDays: number
   theme: Theme
+  /** 3-second shred clip on launch; undefined (older installs) means on. */
+  introClip?: boolean
   lastReminderDate?: DateKey
   updatedAt: number
 }

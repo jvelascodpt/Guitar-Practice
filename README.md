@@ -38,3 +38,9 @@ src/
 All data lives in IndexedDB (Dexie). Every record carries `updatedAt`, deletes leave tombstones in `deletions`,
 and the UI only reads through live queries, so a remote sync (e.g. Supabase) can be added as an adapter
 behind `src/data/sync.ts` without touching screens. Use **More → Backup** to export/import everything as JSON.
+
+## Credits
+
+Intro clip (`public/intro/shred.mp4`): ["FAST GUITAR SOLO"](https://commons.wikimedia.org/wiki/File:FAST_GUITAR_SOLO.webm)
+by Guitinst72, licensed [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/), via Wikimedia Commons.
+Trimmed to 3 seconds (from 0:47.8), cropped, re-encoded to H.264, audio removed.
