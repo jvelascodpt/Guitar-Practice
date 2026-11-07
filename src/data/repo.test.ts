@@ -22,7 +22,7 @@ describe('repo', () => {
     const months = songs.map((s) => s.targetMonth)
     expect([...months].sort((a, b) => a - b)).toEqual(months)
     expect((await repo.getSettings()).onboarded).toBe(false)
-    expect((await repo.getSettings()).theme).toBe('spruce')
+    expect((await repo.getSettings()).theme).toBe('stage')
   })
 
   it('completing a session starts a song and reviews a playable one', async () => {
@@ -72,7 +72,7 @@ describe('v2 migration', () => {
     expect(songs.filter((s) => s.id.startsWith('seed-v2-'))).toHaveLength(14)
     expect(songs.find((s) => s.id === 'seed-v2-1')!.order).toBeGreaterThan(4)
     expect(await db2.deletions.get('songs:seed-song-1')).toBeTruthy()
-    expect((await db2.settings.get('settings'))!.theme).toBe('spruce')
+    expect((await db2.settings.get('settings'))!.theme).toBe('stage')
     db2.close()
   })
 })

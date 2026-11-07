@@ -1,7 +1,7 @@
 @import 'tailwindcss';
 
-/* Theme tokens. Spruce (light acoustic top) is the default; Mahogany is the dark
-   wood option; Dark / Light / System are the original neutral themes. */
+/* Theme tokens. Stage is the default; Spruce and Mahogany are the wood themes;
+   Dark / Light / System are the original neutral themes. */
 :root,
 [data-theme='dark'] {
   --bg: #14161c;
@@ -46,6 +46,45 @@
     --bad: #c2413a;
     color-scheme: light;
   }
+}
+
+/* Stage: a dark concert stage lit by five fret-coloured spotlights
+   (StageBackdrop). Smoked-glass panels, orange-fret accents. */
+[data-theme='stage'] {
+  --bg: #0c0816;
+  --surface: rgb(24 17 40 / 0.84);
+  --surface-2: rgb(255 255 255 / 0.07);
+  --line: rgb(255 255 255 / 0.13);
+  --ink: #f6f3ff;
+  --muted: #bdb5d6;
+  --accent: #fb923c;
+  --accent-ink: #1a0d02;
+  --good: #4ade80;
+  --warn: #facc15;
+  --bad: #f87171;
+  --card-shadow: 0 2px 6px rgba(0, 0, 0, 0.4), 0 12px 30px rgba(0, 0, 0, 0.35);
+  color-scheme: dark;
+}
+@keyframes gy-beam {
+  from {
+    transform: translateX(-50%) rotate(calc(var(--tilt) - 9deg));
+  }
+  to {
+    transform: translateX(-50%) rotate(calc(var(--tilt) + 9deg));
+  }
+}
+.gy-beam {
+  transform: translateX(-50%) rotate(var(--tilt));
+}
+@media (prefers-reduced-motion: reduce) {
+  .gy-beam {
+    animation: none !important;
+  }
+}
+/* Each tab glows in its own fret colour on the Stage theme. */
+[data-theme='stage'] .tab-active {
+  color: var(--tab);
+  text-shadow: 0 0 12px var(--tab);
 }
 
 /* Spruce: the beige top of an acoustic guitar, rosewood-brown accents. */

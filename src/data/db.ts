@@ -45,6 +45,18 @@ export class GuitarDB extends Dexie {
             if (st.theme === 'dark') st.theme = 'spruce'
           })
       })
+    // v4: switch to the Stage theme (the user asked for it app-wide); other
+    // explicit choices are kept.
+    this.version(4)
+      .stores({})
+      .upgrade(async (tx) => {
+        await tx
+          .table<Settings, string>('settings')
+          .toCollection()
+          .modify((st) => {
+            if (st.theme === 'spruce') st.theme = 'stage'
+          })
+      })
     this.on('populate', (tx) => {
       const now = Date.now()
       tx.table('settings').add(defaultSettings(now))

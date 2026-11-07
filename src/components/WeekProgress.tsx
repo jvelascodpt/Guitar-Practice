@@ -1,12 +1,10 @@
 import { useEffect, useState } from 'react'
 import type { WeekView } from '../logic/week'
 import { Card, cx } from './ui'
+import { FRET, fret } from '../lib/fret'
 
 const HATCH = 'bg-[repeating-linear-gradient(45deg,var(--muted)_0_2px,transparent_2px_6px)]'
 
-/** The five classic fret-button colours: green, red, yellow, blue, orange. */
-export const FRET = ['#22c55e', '#ef4444', '#facc15', '#3b82f6', '#f97316']
-const fret = (i: number) => FRET[i % FRET.length]
 /** Glossy lit button: a highlight up-left, full colour, darker rim. */
 const lit = (c: string) => `radial-gradient(circle at 35% 30%, rgba(255,255,255,.85) 0 7%, ${c} 32%, color-mix(in srgb, ${c} 70%, black) 100%)`
 const FRET_RING = `linear-gradient(90deg, ${FRET.join(', ')})`

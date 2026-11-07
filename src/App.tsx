@@ -8,6 +8,8 @@ import { Songs } from './screens/Songs'
 import { More } from './screens/More'
 import { armReminder } from './reminders'
 import { cx } from './components/ui'
+import { StageBackdrop } from './components/StageBackdrop'
+import { fret } from './lib/fret'
 import { FretboardIntro, introEvents } from './components/FretboardIntro'
 import { getActive } from './state/activeSession'
 import { consumeUpdateReload } from './state/updateReload'
@@ -75,10 +77,17 @@ export default function App() {
   }
 
   if (!data.ready) return <div className="min-h-dvh" />
-  if (!settings!.onboarded) return <Onboarding />
+  if (!settings!.onboarded)
+    return (
+      <>
+        {settings!.theme === 'stage' && <StageBackdrop />}
+        <Onboarding />
+      </>
+    )
 
   return (
     <div className="min-h-dvh max-w-lg mx-auto">
+      {settings!.theme === 'stage' && <StageBackdrop />}
       {intro.show && settings!.introClip !== false && <FretboardIntro key={intro.run} onDone={endIntro} />}
       <main className="px-4 pb-28 safe-top">
         {tab === 'today' && <Today data={data} go={go} />}
@@ -89,12 +98,13 @@ export default function App() {
       </main>
       <nav className="fixed bottom-0 inset-x-0 z-40 bg-bg/95 backdrop-blur border-t border-line safe-bottom">
         <div className="max-w-lg mx-auto grid grid-cols-5">
-          {TABS.map((t) => (
+          {TABS.map((t, i) => (
             <button
               key={t.id}
               onClick={() => go(t.id)}
               aria-current={tab === t.id ? 'page' : undefined}
-              className={cx('flex flex-col items-center gap-1 py-2.5 text-[11px] font-medium', tab === t.id ? 'text-accent' : 'text-muted')}
+              style={{ ['--tab' as string]: fret(i) }}
+              className={cx('flex flex-col items-center gap-1 py-2.5 text-[11px] font-medium', tab === t.id ? 'text-accent tab-active' : 'text-muted')}
             >
               <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden>
                 <path d={t.icon} />
