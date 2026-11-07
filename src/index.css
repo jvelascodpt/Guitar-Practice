@@ -85,21 +85,21 @@ button {
   padding-top: env(safe-area-inset-top);
 }
 
-/* Launch animation (FretboardIntro): neck sweeps right, cover is wiped behind it. */
+/* Launch animation (FretboardIntro): neck sweeps diagonally, cover is wiped behind it. */
 @keyframes gy-sweep {
   from {
     transform: translateX(var(--gy-from));
   }
   to {
-    transform: translateX(100vw);
+    transform: translateX(var(--gy-to));
   }
 }
 @keyframes gy-reveal {
   from {
-    clip-path: inset(0 0 0 0);
+    clip-path: inset(0 0 0 var(--gy-from));
   }
   to {
-    clip-path: inset(0 0 0 var(--gy-reveal));
+    clip-path: inset(0 0 0 var(--gy-to));
   }
 }
 @keyframes gy-note {
