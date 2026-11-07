@@ -10,9 +10,25 @@ import { updateSettings } from './data/repo'
  */
 export const notificationsSupported = () => typeof window !== 'undefined' && 'Notification' in window
 
-export async function requestPermission(): Promise<NotificationPermission | 'unsupported'> {
-  if (!notificationsSupported()) return 'unsupported'
-  return Notification.permission === 'default' ? Notification.requestPermission() : Notification.permission
+/**
+ * Asks for notification permission. Must be called directly from a tap (no
+ * await before it) or iOS won't show the prompt. Never throws and never hangs:
+ * iOS can throw, use the old callback form, or leave the promise unresolved.
+ */
+export function requestPermission(timeoutMs = 20_000): Promise<NotificationPermission | 'unsupported'> {
+  if (!notificationsSupported()) return Promise.resolve('unsupported')
+  if (Notification.permission !== 'default') return Promise.resolve(Notification.permission)
+  return new Promise((resolve) => {
+    const done = (p?: NotificationPermission) => resolve(p ?? Notification.permission)
+    const t = window.setTimeout(() => done(), timeoutMs)
+    try {
+      const r = Notification.requestPermission((p) => (clearTimeout(t), done(p)))
+      if (r && typeof r.then === 'function') r.then((p) => (clearTimeout(t), done(p)), () => (clearTimeout(t), done()))
+    } catch {
+      clearTimeout(t)
+      done()
+    }
+  })
 }
 
 export function reminderText(anchor: string) {

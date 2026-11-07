@@ -12,10 +12,19 @@ export function Onboarding() {
   const [target, setTarget] = useState(5)
   const [remind, setRemind] = useState(notificationsSupported())
 
+  const [error, setError] = useState('')
+
   async function finish() {
-    let enabled = false
-    if (remind) enabled = (await requestPermission()) === 'granted'
-    await repo.updateSettings({ anchor: anchor.trim(), reminderTime: time, weeklyTargetDays: target, remindersEnabled: enabled, onboarded: true })
+    // Start the permission prompt first (iOS only shows it straight from a tap),
+    // but save setup without waiting for it, so a stuck prompt can't block you.
+    const permission = remind ? requestPermission() : null
+    try {
+      await repo.updateSettings({ anchor: anchor.trim(), reminderTime: time, weeklyTargetDays: target, remindersEnabled: false, onboarded: true })
+    } catch (e) {
+      setError(`Couldn’t save your setup (${(e as Error).message}). Try again, or close and reopen the app.`)
+      return
+    }
+    if (permission && (await permission) === 'granted') await repo.updateSettings({ remindersEnabled: true })
   }
 
   return (
@@ -61,6 +70,7 @@ export function Onboarding() {
       <Button variant="primary" size="lg" className="mt-10" onClick={finish} disabled={!anchor.trim()}>
         Start my year
       </Button>
+      {error && <p className="text-sm text-bad mt-3 text-center">{error}</p>}
       <p className="text-xs text-muted mt-3 text-center">You can change all of this later under More.</p>
     </div>
   )
