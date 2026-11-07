@@ -12,7 +12,7 @@ export function Plan({ data }: { data: AppData }) {
 
   return (
     <div className="pt-2 space-y-3">
-      <h1 className="text-2xl font-bold">The plan</h1>
+      <h1 className="gy-title text-4xl">The plan</h1>
       <Card className="text-sm text-muted">
         <b className="text-ink">Every month:</b> record one clip, keep the song list current, and back off intensity for a few days if the fretting
         hand or forearm hurts.
@@ -44,7 +44,7 @@ function MonthCard({ m, state, recorded }: { m: PlanMonth; state: 'past' | 'curr
             {m.goalMet ? '✓ goal' : `${done}/${m.weeks.length}`}
           </span>
         </div>
-        <h2 className="text-lg font-bold mt-1">{m.title}</h2>
+        <h2 className="font-display text-2xl mt-1">{m.title}</h2>
         {!open && <p className="text-sm text-muted line-clamp-1">{m.goal}</p>}
       </button>
 

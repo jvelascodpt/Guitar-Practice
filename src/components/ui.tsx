@@ -99,7 +99,7 @@ export function Sheet({ open, onClose, title, children }: { open: boolean; onClo
 export function Stat({ label, value, sub }: { label: string; value: ReactNode; sub?: ReactNode }) {
   return (
     <div className="gy-card rounded-2xl bg-surface border border-line px-3 py-3 min-w-0 shadow-[var(--card-shadow,none)]">
-      <div className="text-2xl font-bold tabular leading-none">{value}</div>
+      <div className="font-display text-3xl leading-none">{value}</div>
       <div className="text-xs text-muted mt-1.5 leading-tight">{label}</div>
       {sub && <div className="text-[11px] text-muted mt-0.5 truncate">{sub}</div>}
     </div>

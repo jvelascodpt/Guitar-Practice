@@ -30,7 +30,7 @@ export function Onboarding() {
   return (
     <div className="min-h-dvh max-w-lg mx-auto px-5 py-10 safe-top">
       <p className="text-accent font-semibold text-sm">Guitar Year</p>
-      <h1 className="text-3xl font-bold mt-1 leading-tight">25 minutes a day. One year. Let’s make it automatic.</h1>
+      <h1 className="gy-title text-4xl mt-2">25 minutes a day. One year. Let’s make it automatic.</h1>
       <p className="text-muted mt-3">
         Every day you open the app, a session is already built for you. You press start. That’s the only decision.
       </p>

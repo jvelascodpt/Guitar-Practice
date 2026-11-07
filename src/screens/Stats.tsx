@@ -42,7 +42,7 @@ export function Stats({ data }: { data: AppData }) {
 
   return (
     <div className="pt-2">
-      <h1 className="text-2xl font-bold">Streaks & stats</h1>
+      <h1 className="gy-title text-4xl">Streaks & stats</h1>
       <p className="text-sm text-muted">Streaks reward showing up. A 5-minute day counts the same as a full one.</p>
 
       <div className="grid grid-cols-2 gap-2 mt-4">

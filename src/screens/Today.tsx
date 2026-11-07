@@ -54,7 +54,7 @@ export function Today({ data, go }: { data: AppData; go: (t: Tab) => void }) {
         <p className="text-sm text-muted">
           {DOW[fromKey(today).getDay()]}, {shortDate(today)}
         </p>
-        <h1 className="text-2xl font-bold mt-0.5">{todaySession ? 'Done for today' : 'Today’s session'}</h1>
+        <h1 className="gy-title text-4xl mt-1">{todaySession ? 'Done for today' : 'Today’s session'}</h1>
         <button onClick={() => go('plan')} className="mt-1 text-sm text-accent font-medium">
           Month {month.id + 1}: {month.title} →
         </button>
@@ -214,7 +214,7 @@ function Preview({
   return (
     <Card>
       <div className="flex items-baseline justify-between mb-3">
-        <h2 className="font-bold text-lg">{mode === 'badDay' ? '5-minute session' : `${built.totalMinutes} minutes`}</h2>
+        <h2 className="font-display text-2xl">{mode === 'badDay' ? '5-minute session' : `${built.totalMinutes} minutes`}</h2>
         {anchor && <span className="text-xs text-muted truncate ml-3">cue: {anchor}</span>}
       </div>
       {mode === 'badDay' && (
@@ -399,7 +399,7 @@ function DoneCard({ data }: { data: AppData }) {
       <div className="flex items-center gap-3">
         <span className="h-12 w-12 rounded-full bg-good text-accent-ink grid place-items-center text-2xl font-bold">✓</span>
         <div>
-          <p className="font-bold text-lg">{s.mode === 'badDay' ? 'Showed up. That counts.' : 'Nice work.'}</p>
+          <p className="font-display text-2xl">{s.mode === 'badDay' ? 'Showed up. That counts.' : 'Nice work.'}</p>
           <p className="text-sm text-muted">
             {s.minutes} min logged · streak {data.streak.current} day{data.streak.current === 1 ? '' : 's'}
           </p>
