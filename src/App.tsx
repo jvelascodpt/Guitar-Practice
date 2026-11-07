@@ -8,7 +8,7 @@ import { Songs } from './screens/Songs'
 import { More } from './screens/More'
 import { armReminder } from './reminders'
 import { cx } from './components/ui'
-import { IntroClip, introEvents, introLog } from './components/IntroClip'
+import { FretboardIntro, introEvents } from './components/FretboardIntro'
 import { getActive } from './state/activeSession'
 
 /** Coming back after this long counts as "opening the app" (iOS resumes home-screen apps instead of relaunching). */
@@ -32,14 +32,9 @@ const readHash = (): Tab => {
 export default function App() {
   const data = useAppData()
   const [tab, setTab] = useState<Tab>(readHash)
-  // Intro clip: shows on launch, and again when you come back after a while
+  // Intro animation: shows on launch, and again when you come back after a while
   // (never while a practice timer is running). `intro` doubles as a remount key.
   const [intro, setIntro] = useState({ show: true, run: 1 })
-  useEffect(() => {
-    const st = data.settings
-    if (data.ready) introLog(`app started${st?.introClip === false ? ' · intro switched off in settings' : ''}${st?.onboarded ? '' : ' · setup screen'}`)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data.ready])
   const endIntro = useCallback(() => setIntro((i) => ({ ...i, show: false })), [])
   useEffect(() => {
     let hiddenAt = 0
@@ -79,7 +74,7 @@ export default function App() {
 
   return (
     <div className="min-h-dvh max-w-lg mx-auto">
-      {intro.show && settings!.introClip !== false && <IntroClip key={intro.run} onDone={endIntro} />}
+      {intro.show && settings!.introClip !== false && <FretboardIntro key={intro.run} onDone={endIntro} />}
       <main className="px-4 pb-28 safe-top">
         {tab === 'today' && <Today data={data} go={go} />}
         {tab === 'stats' && <Stats data={data} />}

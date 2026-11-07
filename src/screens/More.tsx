@@ -6,7 +6,7 @@ import { downloadJson, exportAll, importAll } from '../data/backup'
 import { Banner, Button, Card, Chip, SectionTitle, field } from '../components/ui'
 import { addMonths, monthKey, monthLabel, shortDate } from '../lib/dates'
 import { PLAN_START } from '../logic/plan'
-import { INTRO_CREDIT, introEvents, readIntroLog } from '../components/IntroClip'
+import { introEvents } from '../components/FretboardIntro'
 import { notificationsSupported, reminderText, requestPermission, showReminder } from '../reminders'
 
 export function More({ data }: { data: AppData }) {
@@ -243,7 +243,7 @@ function SettingsPanel({ settings }: { settings: Settings }) {
             </Chip>
           ))}
         </Row>
-        <Row label="Intro clip on launch">
+        <Row label="Intro animation on launch">
           {[true, false].map((on) => (
             <Chip key={String(on)} active={(settings.introClip !== false) === on} onClick={() => repo.updateSettings({ introClip: on })}>
               {on ? 'On' : 'Off'}
@@ -252,7 +252,6 @@ function SettingsPanel({ settings }: { settings: Settings }) {
           <Button size="sm" variant="ghost" onClick={() => introEvents.dispatchEvent(new Event('replay'))} disabled={settings.introClip === false}>
             ▶ Play intro now
           </Button>
-          <IntroDiagnostics />
         </Row>
         <Row label="Theme">
           {(['dark', 'light', 'system'] as Theme[]).map((t) => (
@@ -340,27 +339,6 @@ function Backup() {
       </Card>
       <p className="text-center text-xs text-muted mt-8">Guitar Year · local-first, works offline</p>
       <p className="text-center text-[11px] text-muted mt-1 tabular">Version {new Date(__BUILD_TIME__).toLocaleString([], { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}</p>
-      <p className="text-center text-[11px] text-muted mt-1 px-4">
-        Intro clip:{' '}
-        <a className="underline" href={INTRO_CREDIT.source} target="_blank" rel="noreferrer">
-          “{INTRO_CREDIT.title}”
-        </a>{' '}
-        by {INTRO_CREDIT.author},{' '}
-        <a className="underline" href={INTRO_CREDIT.licenseUrl} target="_blank" rel="noreferrer">
-          {INTRO_CREDIT.license}
-        </a>
-        , via Wikimedia Commons. Trimmed to 3 s, cropped, audio removed.
-      </p>
     </>
-  )
-}
-
-function IntroDiagnostics() {
-  const [log, setLog] = useState<string[]>([])
-  return (
-    <details className="w-full text-xs text-muted" onToggle={() => setLog(readIntroLog())}>
-      <summary className="cursor-pointer">Intro diagnostics</summary>
-      <pre className="mt-2 whitespace-pre-wrap rounded-lg bg-surface-2 p-2 text-[11px] leading-relaxed">{log.length ? log.join('\n') : 'No intro attempts recorded yet.'}</pre>
-    </details>
   )
 }
