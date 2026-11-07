@@ -6,9 +6,10 @@ import * as active from '../state/activeSession'
 import { useActive, elapsedItem, elapsedTotal, type ActiveSession } from '../state/activeSession'
 import { chime, metronome } from '../audio/metronome'
 import { MetronomePanel } from '../components/MetronomePanel'
+import { HowToPanel, HowToToggle, hasHowTo } from '../components/HowTo'
 import { Banner, Button, Card, Stat, cx, fmtClock } from '../components/ui'
 import { fromKey, monthKey, shortDate } from '../lib/dates'
-import type { PainRating, SessionMode } from '../data/types'
+import type { PainRating, SessionMode, Song } from '../data/types'
 import type { Tab } from '../App'
 
 const DOW = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
@@ -66,9 +67,9 @@ export function Today({ data, go }: { data: AppData; go: (t: Tab) => void }) {
       {todaySession && !running ? (
         <DoneCard data={data} />
       ) : running ? (
-        <Running run={running} capMinutes={settings.sessionCapMinutes} onFinish={finish} />
+        <Running run={running} capMinutes={settings.sessionCapMinutes} onFinish={finish} songs={songs} />
       ) : (
-        <Preview today={today} built={built} mode={mode} setMode={setMode} anchor={settings.anchor} onFinish={finish} />
+        <Preview today={today} built={built} songs={songs} mode={mode} setMode={setMode} anchor={settings.anchor} onFinish={finish} />
       )}
     </div>
   )
@@ -111,7 +112,9 @@ function Nudges({ data, built, go }: { data: AppData; built: BuiltSession; go: (
 
 const SECTIONS: SessionItem['section'][] = ['Warm-up', 'Skill of the month', 'Songs']
 
-function ItemList({ items, run, onJump }: { items: SessionItem[]; run?: ActiveSession; onJump?: (i: number) => void }) {
+function ItemList({ items, run, onJump, songs }: { items: SessionItem[]; run?: ActiveSession; onJump?: (i: number) => void; songs: Song[] }) {
+  const [expanded, setExpanded] = useState<string | null>(null)
+  const songOf = (it: SessionItem) => (it.songId ? songs.find((s) => s.id === it.songId) : undefined)
   return (
     <div className="space-y-4">
       {SECTIONS.map((sec) => {
@@ -127,6 +130,9 @@ function ItemList({ items, run, onJump }: { items: SessionItem[]; run?: ActiveSe
               {rows.map(({ it, i }) => {
                 const done = run?.completed[it.id]
                 const current = run?.current === i
+                const song = songOf(it)
+                const canExpand = !run && hasHowTo(it, song)
+                const isOpen = expanded === it.id
                 return (
                   <li key={it.id}>
                     <div
@@ -146,7 +152,12 @@ function ItemList({ items, run, onJump }: { items: SessionItem[]; run?: ActiveSe
                       ) : (
                         <span className="h-6 w-6 shrink-0 rounded-full border-2 border-line" aria-hidden />
                       )}
-                      <button className="flex-1 min-w-0 text-left" onClick={() => onJump?.(i)} disabled={!onJump}>
+                      <button
+                        className="flex-1 min-w-0 text-left"
+                        onClick={() => (run ? onJump?.(i) : canExpand && setExpanded(isOpen ? null : it.id))}
+                        disabled={run ? !onJump : !canExpand}
+                        aria-expanded={canExpand ? isOpen : undefined}
+                      >
                         <div className={cx('text-[15px] font-medium truncate', done && 'text-muted line-through')}>
                           {it.label}
                           {it.kind === 'skill-new' && <span className="ml-2 text-[10px] font-bold uppercase text-accent align-middle">new</span>}
@@ -156,8 +167,14 @@ function ItemList({ items, run, onJump }: { items: SessionItem[]; run?: ActiveSe
                       </button>
                       <span className="text-sm text-muted tabular shrink-0">
                         {it.minutes}′{it.bpm ? ` · ${it.bpm}` : ''}
+                        {canExpand && <span className="ml-1.5 text-accent">{isOpen ? '▴' : 'ⓘ'}</span>}
                       </span>
                     </div>
+                    {isOpen && (
+                      <div className="mt-1 rounded-xl bg-surface-2 p-3">
+                        <HowToPanel item={it} song={song} />
+                      </div>
+                    )}
                   </li>
                 )
               })}
@@ -172,6 +189,7 @@ function ItemList({ items, run, onJump }: { items: SessionItem[]; run?: ActiveSe
 function Preview({
   today,
   built,
+  songs,
   mode,
   setMode,
   anchor,
@@ -179,6 +197,7 @@ function Preview({
 }: {
   today: string
   built: BuiltSession
+  songs: Song[]
   mode: SessionMode
   setMode: (m: SessionMode) => void
   anchor: string
@@ -194,7 +213,8 @@ function Preview({
       {mode === 'badDay' && (
         <p className="text-sm text-muted mb-3">Rough day? Five minutes still counts for your streak. Showing up is the whole point.</p>
       )}
-      <ItemList items={built.items} />
+      <ItemList items={built.items} songs={songs} />
+      <p className="text-xs text-muted mt-3">Tap any item marked ⓘ to see how to do it.</p>
       <div className="mt-5 space-y-2">
         <Button variant="primary" size="lg" onClick={() => active.start(today, mode, built.items)}>
           Start
@@ -218,7 +238,7 @@ function Preview({
   )
 }
 
-function Running({ run, capMinutes, onFinish }: { run: ActiveSession; capMinutes: number; onFinish: () => void }) {
+function Running({ run, capMinutes, onFinish, songs }: { run: ActiveSession; capMinutes: number; onFinish: () => void; songs: Song[] }) {
   const [, setNow] = useState(0)
   const item = run.items[run.current]
   const finished = run.current >= run.items.length
@@ -311,6 +331,7 @@ function Running({ run, capMinutes, onFinish }: { run: ActiveSession; capMinutes
             </div>
             <h2 className="text-xl font-bold mt-2">{item.label}</h2>
             {item.detail && <p className="text-sm text-muted mt-1">{item.detail}</p>}
+            <HowToToggle key={item.id} item={item} song={item.songId ? songs.find((s) => s.id === item.songId) : undefined} />
             <div className="text-5xl font-bold tabular text-center my-5">{fmtClock(remaining)}</div>
             <div className="h-1.5 rounded-full bg-surface-2 overflow-hidden">
               <div className="h-full bg-accent transition-[width] duration-500" style={{ width: `${pct}%` }} />
@@ -341,7 +362,7 @@ function Running({ run, capMinutes, onFinish }: { run: ActiveSession; capMinutes
       {!finished && <MetronomePanel suggestedBpm={item?.bpm} />}
 
       <Card>
-        <ItemList items={run.items} run={run} onJump={(i) => active.goTo(i)} />
+        <ItemList items={run.items} run={run} onJump={(i) => active.goTo(i)} songs={songs} />
         <div className="flex gap-2 mt-4">
           <Button variant="ghost" size="sm" onClick={() => (metronome.stop(), active.clear())}>
             Cancel session
