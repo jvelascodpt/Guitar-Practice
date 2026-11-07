@@ -3,7 +3,17 @@ type Listener = (beat: number) => void
 
 let ctx: AudioContext | null = null
 export function audioCtx(): AudioContext {
-  ctx ??= new AudioContext()
+  if (!ctx) {
+    // iPhone: play like a music app, so the ringer/silent switch doesn't mute
+    // the metronome or chord playback (Safari 16.4+; ignored elsewhere).
+    const nav = navigator as Navigator & { audioSession?: { type: string } }
+    try {
+      if (nav.audioSession) nav.audioSession.type = 'playback'
+    } catch {
+      /* not supported */
+    }
+    ctx = new AudioContext()
+  }
   if (ctx.state === 'suspended') void ctx.resume()
   return ctx
 }

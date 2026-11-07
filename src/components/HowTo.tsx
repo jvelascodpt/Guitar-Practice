@@ -3,6 +3,7 @@ import { howTo, youtubeSearch } from '../data/howto'
 import type { Song } from '../data/types'
 import type { SessionItem } from '../logic/session'
 import { cx } from './ui'
+import { SongListen } from './SongListen'
 
 /** Whether a session item has anything to show in a how-to panel. */
 export function hasHowTo(item: SessionItem, song?: Song) {
@@ -23,6 +24,7 @@ export function HowToPanel({ item, song }: { item: SessionItem; song?: Song }) {
             Open chords / tab / lesson ↗
           </a>
         )}
+        <SongListen song={song} />
       </div>
     )
   }
