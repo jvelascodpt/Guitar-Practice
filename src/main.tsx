@@ -3,6 +3,9 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.tsx'
 import { registerSW } from 'virtual:pwa-register'
+import { watchForUpdateReload } from './state/updateReload'
+
+watchForUpdateReload()
 
 // Auto-update: check for a new version on launch and whenever the app comes
 // back to the foreground; when one is installed the page reloads into it.
