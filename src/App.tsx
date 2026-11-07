@@ -10,6 +10,7 @@ import { armReminder } from './reminders'
 import { cx } from './components/ui'
 import { FretboardIntro, introEvents } from './components/FretboardIntro'
 import { getActive } from './state/activeSession'
+import { consumeUpdateReload } from './state/updateReload'
 
 /** Coming back after this long counts as "opening the app" (iOS resumes home-screen apps instead of relaunching). */
 const REOPEN_AFTER_MS = 5 * 60_000
@@ -34,7 +35,7 @@ export default function App() {
   const [tab, setTab] = useState<Tab>(readHash)
   // Intro animation: shows on launch, and again when you come back after a while
   // (never while a practice timer is running). `intro` doubles as a remount key.
-  const [intro, setIntro] = useState({ show: true, run: 1 })
+  const [intro, setIntro] = useState(() => ({ show: !consumeUpdateReload(), run: 1 }))
   const endIntro = useCallback(() => setIntro((i) => ({ ...i, show: false })), [])
   useEffect(() => {
     let hiddenAt = 0
