@@ -258,3 +258,116 @@ button {
     opacity: 0;
   }
 }
+
+/* ---- Sheen the Shredder ---- */
+.sheen-bob {
+  animation: sheen-bob 1.3s ease-in-out infinite;
+}
+.sheen-head {
+  animation: sheen-nod 1.3s ease-in-out infinite;
+}
+.sheen-foot {
+  animation: sheen-tap 0.65s ease-in-out infinite;
+}
+.sheen-strum {
+  animation: sheen-strum-idle 1.3s ease-in-out infinite;
+}
+.sheen-eyes {
+  animation: sheen-blink 4.2s infinite;
+}
+/* While chords play (90 bpm): strum every 8th note, headbang on the beat. */
+.sheen-playing .sheen-strum {
+  animation: sheen-strum 0.333s ease-in-out infinite alternate;
+}
+.sheen-playing .sheen-head {
+  animation: sheen-bang 0.667s ease-in-out infinite;
+}
+.sheen-playing .sheen-bob,
+.sheen-playing .sheen-foot {
+  animation-duration: 0.667s;
+}
+.sheen-note {
+  opacity: 0;
+  animation: sheen-note 1.35s ease-out infinite;
+}
+@keyframes sheen-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(1.5px);
+  }
+}
+@keyframes sheen-nod {
+  0%,
+  100% {
+    transform: rotate(-3deg);
+  }
+  50% {
+    transform: rotate(3deg);
+  }
+}
+@keyframes sheen-tap {
+  0%,
+  100% {
+    transform: rotate(0);
+  }
+  50% {
+    transform: rotate(-14deg);
+  }
+}
+@keyframes sheen-strum-idle {
+  0%,
+  100% {
+    transform: rotate(-4deg);
+  }
+  50% {
+    transform: rotate(6deg);
+  }
+}
+@keyframes sheen-strum {
+  from {
+    transform: rotate(-12deg);
+  }
+  to {
+    transform: rotate(16deg);
+  }
+}
+@keyframes sheen-bang {
+  0%,
+  100% {
+    transform: rotate(-2deg) translateY(0);
+  }
+  50% {
+    transform: rotate(9deg) translateY(2px);
+  }
+}
+@keyframes sheen-blink {
+  0%,
+  92%,
+  100% {
+    transform: scaleY(1);
+  }
+  95% {
+    transform: scaleY(0.1);
+  }
+}
+@keyframes sheen-note {
+  0% {
+    transform: translate(0, 0);
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate(10px, -34px);
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sheen:not(.sheen-playing) * {
+    animation: none !important;
+  }
+}

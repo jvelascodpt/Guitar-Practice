@@ -7,6 +7,9 @@ import { useActive, elapsedItem, elapsedTotal, type ActiveSession } from '../sta
 import { chime, metronome } from '../audio/metronome'
 import { MetronomePanel } from '../components/MetronomePanel'
 import { WeekProgress } from '../components/WeekProgress'
+import { SheenHeader } from '../components/SheenAssistant'
+import { describeLook, sheenLook } from '../components/Sheen'
+import { sheenLines } from '../logic/sheen'
 import { weekView } from '../logic/week'
 import { HowToPanel, HowToToggle, hasHowTo } from '../components/HowTo'
 import { Banner, Button, Card, Stat, cx, fmtClock } from '../components/ui'
@@ -23,6 +26,7 @@ export function Today({ data, go }: { data: AppData; go: (t: Tab) => void }) {
     [sessions, streak.frozen, today, settings?.weeklyTargetDays],
   )
   const [mode, setMode] = useState<SessionMode>('full')
+  const [hour] = useState(() => new Date().getHours())
   const run = useActive()
 
   // A session left running from a previous day is discarded.
@@ -35,6 +39,24 @@ export function Today({ data, go }: { data: AppData; go: (t: Tab) => void }) {
     [today, month, prevMonth, sessions, songs, mode],
   )
   if (!month || !built || !settings) return null
+
+  const songTitle = (id?: string) => (id ? songs.find((x) => x.id === id)?.title : undefined)
+  const sheenSays = sheenLines({
+    hour,
+    doneToday: !!todaySession,
+    sessionMinutes: built.totalMinutes,
+    firstItem: built.items[0]?.label,
+    anchor: settings.anchor,
+    weekMessage: week.message,
+    painEaseUntil: built.painEaseUntil,
+    dangerTitle: month.dangerZone ? month.title : undefined,
+    newSkill: built.newSkill,
+    startSong: songTitle(built.items.find((x) => x.kind === 'song-start')?.songId),
+    reviewSong: songTitle(built.items.find((x) => x.review && x.songId && songs.find((s) => s.id === x.songId)?.review?.due && songs.find((s) => s.id === x.songId)!.review!.due <= today)?.songId),
+    plateauSong: data.plateaued[0]?.title,
+    recordPrompt: !data.recordedThisMonth && Number(today.slice(8)) >= 20,
+    look: describeLook(sheenLook(today)),
+  })
 
   const running = run && run.date === today ? run : null
 
@@ -50,15 +72,15 @@ export function Today({ data, go }: { data: AppData; go: (t: Tab) => void }) {
 
   return (
     <div className="space-y-4">
-      <header className="pt-2">
+      <SheenHeader today={today} lines={sheenSays} songs={songs}>
         <p className="text-sm text-muted">
           {DOW[fromKey(today).getDay()]}, {shortDate(today)}
         </p>
         <h1 className="gy-title text-4xl mt-1">{todaySession ? 'Done for today' : 'Today’s session'}</h1>
-        <button onClick={() => go('plan')} className="mt-1 text-sm text-accent font-medium">
+        <button onClick={() => go('plan')} className="mt-1 text-sm text-accent font-medium text-left">
           Month {month.id + 1}: {month.title} →
         </button>
-      </header>
+      </SheenHeader>
 
       <WeekProgress view={week} />
 
