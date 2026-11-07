@@ -15,9 +15,10 @@ describe('repo', () => {
   it('seeds plan, song library and settings', async () => {
     expect(await db.plan.count()).toBe(12)
     const songs = await repo.listSongs()
-    expect(songs).toHaveLength(14)
+    expect(songs).toHaveLength(16)
+    expect(songs[0].title).toBe('Cult of Personality (main riff)')
     expect(songs.some((s) => s.tags.includes('placeholder'))).toBe(false)
-    expect(songs.filter((s) => s.tier === 'stretch')).toHaveLength(4)
+    expect(songs.filter((s) => s.tier === 'stretch')).toHaveLength(6)
     // ordered to match the plan
     const months = songs.map((s) => s.targetMonth)
     expect([...months].sort((a, b) => a - b)).toEqual(months)
@@ -47,7 +48,7 @@ describe('repo', () => {
     const backup = JSON.parse(JSON.stringify(await exportAll()))
     await db.songs.clear()
     await importAll(backup)
-    expect(await db.songs.count()).toBe(14)
+    expect(await db.songs.count()).toBe(16)
     expect((await repo.getSettings()).anchor).toBe('after work')
     await expect(importAll({ app: 'other' })).rejects.toThrow()
   })
@@ -73,6 +74,10 @@ describe('v2 migration', () => {
     expect(songs.find((s) => s.id === 'seed-v2-1')!.order).toBeGreaterThan(4)
     expect(await db2.deletions.get('songs:seed-song-1')).toBeTruthy()
     expect((await db2.settings.get('settings'))!.theme).toBe('stage')
+    // v5 adds the first song exactly once, at the front of the queue
+    const cult = songs.filter((s) => s.id.startsWith('seed-cult-'))
+    expect(cult.map((s) => s.id).sort()).toEqual(['seed-cult-riff', 'seed-cult-solo'])
+    expect(songs[0].id).toBe('seed-cult-riff')
     db2.close()
   })
 })

@@ -262,7 +262,10 @@ const lesson = (q: string) => `https://www.youtube.com/results?search_query=${en
 const chordsSearch = (q: string) => `https://www.ultimate-guitar.com/search.php?search_type=title&value=${encodeURIComponent(q)}`
 const listen = (q: string) => `https://www.youtube.com/results?search_query=${encodeURIComponent(q)}`
 
-type SongSeed = Pick<Song, 'title' | 'artist' | 'difficulty' | 'chords' | 'techniques' | 'tier' | 'targetMonth' | 'notes' | 'tags' | 'link'>
+type SongSeed = Pick<Song, 'title' | 'artist' | 'difficulty' | 'chords' | 'techniques' | 'tier' | 'targetMonth' | 'notes' | 'tags' | 'link'> & {
+  /** Fixed id for songs added after launch (keeps existing ids stable). */
+  id?: string
+}
 
 const F_TIP = 'Until barre month (April), play Fmaj7 (x x 3 2 1 0) wherever the sheet says F.'
 const CHECK = 'Chord sheets for this one disagree; check against the recording.'
@@ -272,6 +275,21 @@ const CHECK = 'Chord sheets for this one disagree; check against the recording.'
  * EDM tracks are played as their chord loop + the synth hook as a single-note riff.
  */
 export const SONGS: SongSeed[] = [
+  // The user's chosen first song (added Nov 2026)
+  {
+    id: 'seed-cult-riff',
+    title: 'Cult of Personality (main riff)',
+    artist: 'Living Colour',
+    difficulty: 3,
+    chords: ['G5', 'C5', 'B♭5', 'F5'],
+    techniques: ['Power chords', 'Palm muting', 'Riff at half speed'],
+    tier: 'stretch',
+    targetMonth: 0,
+    tags: ['rock', 'first song'],
+    notes:
+      'Your first song! The record is ~150 bpm; start at half speed (75) with the metronome and add 5 bpm when it’s clean 3 times in a row. Key of G, palm-muted power chords. Chord sheets vary, so check against the recording. The solo is a separate goal for later.',
+    link: lesson('Cult of Personality Living Colour main riff'),
+  },
   // Dec: open chords, first 2 songs
   { title: 'Heroes (We Could Be)', artist: 'Alesso ft. Tove Lo', difficulty: 1, chords: ['Am', 'G', 'C'], techniques: ['Capo 5', '3-chord loop', 'Downstrokes'], tier: 'easy', targetMonth: 1, tags: ['edm'], notes: 'Capo 5. Three chords on repeat; a good first song.', link: chordsSearch('Heroes We Could Be Alesso') },
   { title: 'Feel So Close', artist: 'Calvin Harris', difficulty: 1, chords: ['Am', 'Em', 'G', 'C'], techniques: ['4-chord loop', 'Strumming'], tier: 'easy', targetMonth: 1, tags: ['edm'], notes: 'No capo. Strum the loop first; the single-note intro riff makes a fun extra later.', link: chordsSearch('Feel So Close Calvin Harris') },
@@ -291,12 +309,27 @@ export const SONGS: SongSeed[] = [
   // Jul: ear training
   { title: 'Where You Are', artist: 'John Summit & Hayla', difficulty: 2, chords: [], techniques: ['By ear', 'Chord loop', 'Vocal hook'], tier: 'easy', targetMonth: 8, tags: ['edm', 'by ear'], notes: 'Ear-training song: find the chord loop and the vocal hook yourself. (The Zedd remix chord sheet is in A minor.)', link: listen('John Summit Hayla Where You Are') },
   { title: 'Food for the Soul', artist: 'it’s murph', difficulty: 2, chords: [], techniques: ['By ear', 'Synth hook as a riff'], tier: 'easy', targetMonth: 8, tags: ['edm', 'by ear'], notes: 'Ear-training song: no tabs exist, so work out the main melody one string at a time.', link: listen('its murph Food for the Soul') },
+  // Aug: technique push
+  {
+    id: 'seed-cult-solo',
+    title: 'Cult of Personality (solo)',
+    artist: 'Living Colour',
+    difficulty: 5,
+    chords: [],
+    techniques: ['Fast pentatonic runs', 'Bends', 'Speed building'],
+    tier: 'stretch',
+    targetMonth: 9,
+    tags: ['rock'],
+    notes: 'A real shred solo (G blues). Learn it in short phrases with the speed ladder from August. Full speed is a year-end flex.',
+    link: lesson('Cult of Personality Living Colour solo'),
+  },
 ]
 
 export function seedSongs(now = Date.now(), startOrder = 1): Song[] {
+  let n = 0
   return SONGS.map((x, i) => ({
     ...x,
-    id: `seed-v2-${i + 1}`,
+    id: x.id ?? `seed-v2-${++n}`,
     status: 'queued',
     order: startOrder + i,
     createdAt: now,

@@ -9,6 +9,7 @@ import { More } from './screens/More'
 import { armReminder } from './reminders'
 import { cx } from './components/ui'
 import { StageBackdrop } from './components/StageBackdrop'
+import { SheenFloating } from './components/SheenAssistant'
 import { fret } from './lib/fret'
 import { FretboardIntro, introEvents } from './components/FretboardIntro'
 import { getActive } from './state/activeSession'
@@ -96,6 +97,7 @@ export default function App() {
         {tab === 'songs' && <Songs data={data} />}
         {tab === 'more' && <More data={data} />}
       </main>
+      {tab !== 'today' && <SheenFloating today={data.today} songs={data.songs} />}
       <nav className="fixed bottom-0 inset-x-0 z-40 bg-bg/95 backdrop-blur border-t border-line safe-bottom">
         <div className="max-w-lg mx-auto grid grid-cols-5">
           {TABS.map((t, i) => (

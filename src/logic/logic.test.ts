@@ -126,12 +126,15 @@ describe('session builder', () => {
 
   it('December auto-offers the first queued song', () => {
     const b = buildSession({ today: '2026-12-02', plan: plan[1], prevPlan: plan[0], sessions: [], songs, mode: 'full' })
-    expect(b.items.find((i) => i.kind === 'song-start')?.songId).toBe(songs[0].id)
+    expect(b.items.find((i) => i.kind === 'song-start')?.songId).toBe('seed-cult-riff')
   })
 
-  it('November does not offer songs targeted for later', () => {
+  it('November offers only the first song (Cult of Personality), not later ones', () => {
     const b = buildSession({ today: '2026-11-06', plan: plan[0], sessions: [], songs, mode: 'full' })
-    expect(b.items.some((i) => i.kind === 'song-start')).toBe(false)
+    expect(b.items.filter((i) => i.kind === 'song-start').map((i) => i.songId)).toEqual(['seed-cult-riff'])
+    const without = songs.filter((s) => s.targetMonth > 0)
+    const b2 = buildSession({ today: '2026-11-06', plan: plan[0], sessions: [], songs: without, mode: 'full' })
+    expect(b2.items.some((i) => i.kind === 'song-start')).toBe(false)
   })
 
   it('sore twice → technique halved', () => {
