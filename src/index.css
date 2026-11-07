@@ -67,6 +67,24 @@
   --grain-opacity: 0.6;
   color-scheme: light;
 }
+/* Spruce panels: dark rosewood "glass" over the light wood, so they stand out
+   but still let the grain show through. Text inside flips to cream. Every
+   pair here is ≥ 4.5:1 against the panel composited over the background. */
+[data-theme='spruce'] .gy-card {
+  --surface: rgb(48 29 17 / 0.85);
+  --surface-2: rgb(255 236 210 / 0.1);
+  --line: rgb(255 236 210 / 0.16);
+  --ink: #f8eedf;
+  --muted: #e3cdb0;
+  --accent: #f2b86c;
+  --accent-ink: #2a170e;
+  --good: #a3e3ac;
+  --warn: #f3cf7c;
+  --bad: #f8b0a0;
+  --card-shadow: 0 2px 4px rgba(43, 24, 10, 0.18), 0 10px 24px rgba(43, 24, 10, 0.16);
+  color: var(--ink);
+  color-scheme: dark;
+}
 /* Mahogany: the warm dark back and sides, cream text, amber accents. */
 [data-theme='mahogany'] {
   --bg: #2a170e;

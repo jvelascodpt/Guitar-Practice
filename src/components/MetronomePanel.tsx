@@ -29,7 +29,7 @@ export function MetronomePanel({ suggestedBpm }: { suggestedBpm?: number }) {
   }
 
   return (
-    <div className="rounded-2xl bg-surface border border-line p-3">
+    <div className="gy-card rounded-2xl bg-surface border border-line p-3 shadow-[var(--card-shadow,none)]">
       <div className="flex items-center gap-2">
         <button
           onClick={toggle}
