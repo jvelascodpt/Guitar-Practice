@@ -163,7 +163,23 @@ function GuitarBody({ shape, fill }: { shape: SheenLook['guitar']['k']; fill: st
   return <path d={d} fill={fill} stroke="rgba(0,0,0,.35)" strokeWidth="0.9" />
 }
 
-export function SheenFigure({ look, playing, className, style }: { look: SheenLook; playing?: boolean; className?: string; style?: CSSProperties }) {
+export type SheenMode = 'idle' | 'walk' | 'shred' | 'dance'
+
+export function SheenFigure({
+  look,
+  playing: playingProp,
+  mode = 'idle',
+  className,
+  style,
+}: {
+  look: SheenLook
+  playing?: boolean
+  mode?: SheenMode
+  className?: string
+  style?: CSSProperties
+}) {
+  // Shredding and dancing both get the "in the zone" face and flying notes.
+  const playing = playingProp || mode === 'shred' || mode === 'dance'
   const gFill = look.guitarColor.c === 'sunburst' ? 'url(#sheen-burst)' : look.guitarColor.c
   const sleeve = look.jacket.kind === 'none' ? look.shirt.c : look.jacket.c
   const accColor = look.shirt.c === '#1f1f25' ? '#ef4444' : look.shirt.c
@@ -171,7 +187,7 @@ export function SheenFigure({ look, playing, className, style }: { look: SheenLo
   const pivot = (x: number, y: number): CSSProperties => ({ transformBox: 'view-box', transformOrigin: `${x}px ${y}px` })
 
   return (
-    <svg viewBox="0 0 120 140" className={cx('sheen', playing && 'sheen-playing', className)} style={style} role="img" aria-label="Sheen the Shredder">
+    <svg viewBox="0 0 120 140" className={cx('sheen', `sheen-mode-${playingProp ? 'shred' : mode}`, playing && 'sheen-playing', className)} style={style} role="img" aria-label="Sheen the Shredder">
       <defs>
         <radialGradient id="sheen-burst" cx="35%" cy="50%" r="70%">
           <stop offset="0" stopColor="#ffd36b" />
@@ -184,11 +200,15 @@ export function SheenFigure({ look, playing, className, style }: { look: SheenLo
 
       <g className="sheen-bob">
         {/* legs + shoes */}
-        <rect x="45" y="92" width="12" height="30" rx="4" fill={look.pants} />
-        <rect x="63" y="92" width="12" height="30" rx="4" fill={look.pants} />
-        <rect x="40" y="119" width="18" height="8" rx="4" fill={look.shoes} stroke="rgba(0,0,0,.3)" strokeWidth=".8" />
-        <g className="sheen-foot" style={pivot(66, 126)}>
-          <rect x="62" y="119" width="18" height="8" rx="4" fill={look.shoes} stroke="rgba(0,0,0,.3)" strokeWidth=".8" />
+        <g className="sheen-leg-l" style={pivot(51, 93)}>
+          <rect x="45" y="92" width="12" height="30" rx="4" fill={look.pants} />
+          <rect x="40" y="119" width="18" height="8" rx="4" fill={look.shoes} stroke="rgba(0,0,0,.3)" strokeWidth=".8" />
+        </g>
+        <g className="sheen-leg-r" style={pivot(69, 93)}>
+          <rect x="63" y="92" width="12" height="30" rx="4" fill={look.pants} />
+          <g className="sheen-foot" style={pivot(66, 126)}>
+            <rect x="62" y="119" width="18" height="8" rx="4" fill={look.shoes} stroke="rgba(0,0,0,.3)" strokeWidth=".8" />
+          </g>
         </g>
 
         {/* hoodie hood behind the head */}
