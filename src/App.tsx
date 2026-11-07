@@ -60,7 +60,11 @@ export default function App() {
   }, [])
 
   useEffect(() => {
-    if (settings) document.documentElement.dataset.theme = settings.theme
+    if (!settings) return
+    document.documentElement.dataset.theme = settings.theme
+    // Match the phone's status bar to the theme background.
+    const bg = getComputedStyle(document.documentElement).getPropertyValue('--bg').trim()
+    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', bg)
   }, [settings])
 
   useEffect(() => (settings ? armReminder(settings, !!todaySession) : undefined), [settings, todaySession, data.today])

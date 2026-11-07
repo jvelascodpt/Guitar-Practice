@@ -1,6 +1,7 @@
 @import 'tailwindcss';
 
-/* Theme tokens: dark is the default; light via data-theme="light" (or system preference). */
+/* Theme tokens. Spruce (light acoustic top) is the default; Mahogany is the dark
+   wood option; Dark / Light / System are the original neutral themes. */
 :root,
 [data-theme='dark'] {
   --bg: #14161c;
@@ -47,6 +48,44 @@
   }
 }
 
+/* Spruce: the beige top of an acoustic guitar, rosewood-brown accents. */
+[data-theme='spruce'] {
+  --bg: #e8d9bc;
+  --surface: rgb(247 239 224 / 0.9);
+  --surface-2: #efe2c9;
+  --line: #d5bf98;
+  --ink: #2b1c10;
+  --muted: #6b5640;
+  --accent: #8a4a1f;
+  --accent-ink: #fff8ec;
+  --good: #2f7a3e;
+  --warn: #8a5a00;
+  --bad: #a63a2a;
+  --card-shadow: 0 1px 2px rgba(74, 44, 18, 0.08), 0 4px 14px rgba(74, 44, 18, 0.06);
+  /* vertical spruce grain */
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='900'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.5 0.006' numOctaves='4' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.45 0 0 0 0 0.29 0 0 0 0 0.13 2.6 0 0 0 -1.05'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+  --grain-opacity: 0.6;
+  color-scheme: light;
+}
+/* Mahogany: the warm dark back and sides, cream text, amber accents. */
+[data-theme='mahogany'] {
+  --bg: #2a170e;
+  --surface: rgb(58 34 22 / 0.9);
+  --surface-2: #4a2d1e;
+  --line: #60402c;
+  --ink: #f4e7d3;
+  --muted: #c9ad8c;
+  --accent: #e3a253;
+  --accent-ink: #2a170e;
+  --good: #86cf8f;
+  --warn: #e8bf5a;
+  --bad: #f08d7c;
+  --card-shadow: 0 1px 2px rgba(0, 0, 0, 0.25), 0 6px 18px rgba(0, 0, 0, 0.2);
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='900'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.22 0.006' numOctaves='4' seed='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.62 0 0 0 0 0.33 0 0 0 0 0.17 1.2 0 0 0 -0.45'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+  --grain-opacity: 0.6;
+  color-scheme: dark;
+}
+
 @theme inline {
   --color-bg: var(--bg);
   --color-surface: var(--surface);
@@ -62,15 +101,30 @@
   --font-sans: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
 }
 
+/* Solid colour on <html> only: a body background would paint over the
+   grain layer below (negative z-index sits under in-flow backgrounds). */
+html {
+  background: var(--bg);
+}
 html,
 body {
-  background: var(--bg);
   color: var(--ink);
   -webkit-tap-highlight-color: transparent;
   overscroll-behavior-y: none;
 }
 body {
   font-family: var(--font-sans);
+}
+/* Wood grain behind everything (themes that define --grain). Fixed so it
+   doesn't tile visibly while scrolling. */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image: var(--grain, none);
+  opacity: var(--grain-opacity, 0);
 }
 button {
   cursor: pointer;
