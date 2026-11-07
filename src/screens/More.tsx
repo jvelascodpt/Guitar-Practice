@@ -6,7 +6,7 @@ import { downloadJson, exportAll, importAll } from '../data/backup'
 import { Banner, Button, Card, Chip, SectionTitle, field } from '../components/ui'
 import { addMonths, monthKey, monthLabel, shortDate } from '../lib/dates'
 import { PLAN_START } from '../logic/plan'
-import { INTRO_CREDIT } from '../components/IntroClip'
+import { INTRO_CREDIT, introEvents } from '../components/IntroClip'
 import { notificationsSupported, reminderText, requestPermission, showReminder } from '../reminders'
 
 export function More({ data }: { data: AppData }) {
@@ -249,6 +249,9 @@ function SettingsPanel({ settings }: { settings: Settings }) {
               {on ? 'On' : 'Off'}
             </Chip>
           ))}
+          <Button size="sm" variant="ghost" onClick={() => introEvents.dispatchEvent(new Event('replay'))} disabled={settings.introClip === false}>
+            ▶ Play intro now
+          </Button>
         </Row>
         <Row label="Theme">
           {(['dark', 'light', 'system'] as Theme[]).map((t) => (
@@ -335,6 +338,7 @@ function Backup() {
         {msg && <Banner tone={msg.tone}>{msg.text}</Banner>}
       </Card>
       <p className="text-center text-xs text-muted mt-8">Guitar Year · local-first, works offline</p>
+      <p className="text-center text-[11px] text-muted mt-1 tabular">Version {new Date(__BUILD_TIME__).toLocaleString([], { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}</p>
       <p className="text-center text-[11px] text-muted mt-1 px-4">
         Intro clip:{' '}
         <a className="underline" href={INTRO_CREDIT.source} target="_blank" rel="noreferrer">

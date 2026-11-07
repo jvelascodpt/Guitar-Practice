@@ -8,10 +8,12 @@ import { Songs } from './screens/Songs'
 import { More } from './screens/More'
 import { armReminder } from './reminders'
 import { cx } from './components/ui'
-import { IntroClip } from './components/IntroClip'
+import { IntroClip, introEvents } from './components/IntroClip'
+import { getActive } from './state/activeSession'
 
-// Respect the OS 'reduce motion' setting: skip the intro clip entirely.
-const reducedMotion = typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches
+/** Coming back after this long counts as "opening the app" (iOS resumes home-screen apps instead of relaunching). */
+const REOPEN_AFTER_MS = 5 * 60_000
+
 
 export type Tab = 'today' | 'stats' | 'plan' | 'songs' | 'more'
 const TABS: { id: Tab; label: string; icon: string }[] = [
@@ -30,8 +32,24 @@ const readHash = (): Tab => {
 export default function App() {
   const data = useAppData()
   const [tab, setTab] = useState<Tab>(readHash)
-  const [introDone, setIntroDone] = useState(reducedMotion)
-  const endIntro = useCallback(() => setIntroDone(true), [])
+  // Intro clip: shows on launch, and again when you come back after a while
+  // (never while a practice timer is running). `intro` doubles as a remount key.
+  const [intro, setIntro] = useState({ show: true, run: 1 })
+  const endIntro = useCallback(() => setIntro((i) => ({ ...i, show: false })), [])
+  useEffect(() => {
+    let hiddenAt = 0
+    const onVis = () => {
+      if (document.visibilityState === 'hidden') hiddenAt = Date.now()
+      else if (hiddenAt && Date.now() - hiddenAt >= REOPEN_AFTER_MS && !getActive()?.runningSince) setIntro((i) => ({ show: true, run: i.run + 1 }))
+    }
+    const replay = () => setIntro((i) => ({ show: true, run: i.run + 1 }))
+    document.addEventListener('visibilitychange', onVis)
+    introEvents.addEventListener('replay', replay)
+    return () => {
+      document.removeEventListener('visibilitychange', onVis)
+      introEvents.removeEventListener('replay', replay)
+    }
+  }, [])
   const { settings, todaySession } = data
 
   useEffect(() => {
@@ -56,7 +74,7 @@ export default function App() {
 
   return (
     <div className="min-h-dvh max-w-lg mx-auto">
-      {!introDone && settings!.introClip !== false && <IntroClip onDone={endIntro} />}
+      {intro.show && settings!.introClip !== false && <IntroClip key={intro.run} onDone={endIntro} />}
       <main className="px-4 pb-28 safe-top">
         {tab === 'today' && <Today data={data} go={go} />}
         {tab === 'stats' && <Stats data={data} />}
