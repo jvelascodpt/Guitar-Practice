@@ -103,7 +103,7 @@ export function FretboardIntro({ onDone }: { onDone: () => void }) {
       {/* Dark cover with the title; its left edge follows the neck's leading edge. */}
       <div className="absolute inset-0 bg-bg grid place-items-center" style={timing('gy-reveal')}>
         <div className="text-center px-6">
-          <div className="text-4xl font-bold text-ink tracking-tight">Guitar Year</div>
+          <div className="gy-title text-6xl">Guitar Year</div>
           <div className="text-sm text-muted mt-2">Tap to skip</div>
         </div>
       </div>

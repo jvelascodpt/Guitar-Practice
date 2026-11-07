@@ -12,7 +12,7 @@ import { notificationsSupported, reminderText, requestPermission, showReminder }
 export function More({ data }: { data: AppData }) {
   return (
     <div className="pt-2">
-      <h1 className="text-2xl font-bold">More</h1>
+      <h1 className="gy-title text-4xl">More</h1>
       <Recordings data={data} />
       {data.settings && <SettingsPanel settings={data.settings} />}
       <Backup />

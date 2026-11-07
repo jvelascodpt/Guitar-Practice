@@ -28,7 +28,7 @@ export function Songs({ data }: { data: AppData }) {
     <div className="pt-2">
       <div className="flex items-end justify-between">
         <div>
-          <h1 className="text-2xl font-bold">Songs</h1>
+          <h1 className="gy-title text-4xl">Songs</h1>
           <p className="text-sm text-muted">
             <b className="text-good">{canPlayCount}</b> I can play · {songs.length} total
           </p>

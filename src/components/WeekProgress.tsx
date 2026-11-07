@@ -37,7 +37,7 @@ export function WeekProgress({ view }: { view: WeekView }) {
       <div className={goal ? "rounded-2xl bg-bg" : undefined}>
         <Card className="relative overflow-hidden">
           <div className="flex items-baseline justify-between">
-            <h2 className="font-bold">This week</h2>
+            <h2 className="font-display text-2xl">This week</h2>
             <span className="text-sm text-muted tabular">
               <b className="text-ink">{count}</b> of {target} days{bonus > 0 && <span className="text-accent font-semibold"> +{bonus} bonus</span>}
             </span>

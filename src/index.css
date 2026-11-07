@@ -156,6 +156,7 @@
   --color-warn: var(--warn);
   --color-bad: var(--bad);
   --font-sans: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-display: 'Metal Mania', ui-sans-serif, system-ui, sans-serif;
 }
 
 /* Solid colour on <html> only: a body background would paint over the
@@ -226,6 +227,21 @@ button {
     opacity: 0;
     transform: scale(0.9);
   }
+}
+
+/* Page titles: rock display font; on Stage they get a metallic gold finish. */
+.gy-title {
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  line-height: 1.05;
+}
+[data-theme='stage'] .gy-title {
+  background: linear-gradient(180deg, #ffffff 0%, #ffe08a 45%, #fb923c 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 2px 0 #7c2d12);
 }
 
 /* Weekly goal confetti */
