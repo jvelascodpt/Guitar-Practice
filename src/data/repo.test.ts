@@ -22,6 +22,7 @@ describe('repo', () => {
     const months = songs.map((s) => s.targetMonth)
     expect([...months].sort((a, b) => a - b)).toEqual(months)
     expect((await repo.getSettings()).onboarded).toBe(false)
+    expect((await repo.getSettings()).theme).toBe('spruce')
   })
 
   it('completing a session starts a song and reviews a playable one', async () => {
@@ -59,6 +60,7 @@ describe('v2 migration', () => {
     const v1 = new Dexie(name)
     v1.version(1).stores({ settings: 'id', sessions: 'id, date, updatedAt', songs: 'id, status, difficulty, order, updatedAt', plan: 'id, monthKey, updatedAt', recordings: 'id, monthKey, date, updatedAt', deletions: 'id, table, deletedAt' })
     const old = (i: number, extra = {}) => ({ id: `seed-song-${i}`, title: `Old ${i}`, status: 'queued', order: i, tags: ['placeholder'], createdAt: 1, updatedAt: 1, ...extra })
+    await v1.table('settings').add({ id: 'settings', onboarded: true, theme: 'dark', updatedAt: 1 })
     await v1.table('songs').bulkAdd([old(1), old(2, { status: 'learning', updatedAt: 5 }), old(3, { updatedAt: 9 }), { ...old(4), id: 'mine', tags: [] }])
     v1.close()
 
@@ -70,6 +72,7 @@ describe('v2 migration', () => {
     expect(songs.filter((s) => s.id.startsWith('seed-v2-'))).toHaveLength(14)
     expect(songs.find((s) => s.id === 'seed-v2-1')!.order).toBeGreaterThan(4)
     expect(await db2.deletions.get('songs:seed-song-1')).toBeTruthy()
+    expect((await db2.settings.get('settings'))!.theme).toBe('spruce')
     db2.close()
   })
 })

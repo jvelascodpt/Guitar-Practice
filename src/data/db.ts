@@ -33,6 +33,18 @@ export class GuitarDB extends Dexie {
         const maxOrder = (await songs.toArray()).reduce((m, s) => Math.max(m, s.order), 0)
         await songs.bulkAdd(seedSongs(now, maxOrder + 1))
       })
+    // v3: the wood "Spruce" theme replaces the old dark default (explicit
+    // light/system choices are kept).
+    this.version(3)
+      .stores({})
+      .upgrade(async (tx) => {
+        await tx
+          .table<Settings, string>('settings')
+          .toCollection()
+          .modify((st) => {
+            if (st.theme === 'dark') st.theme = 'spruce'
+          })
+      })
     this.on('populate', (tx) => {
       const now = Date.now()
       tx.table('settings').add(defaultSettings(now))
