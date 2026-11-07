@@ -6,6 +6,8 @@ import * as active from '../state/activeSession'
 import { useActive, elapsedItem, elapsedTotal, type ActiveSession } from '../state/activeSession'
 import { chime, metronome } from '../audio/metronome'
 import { MetronomePanel } from '../components/MetronomePanel'
+import { WeekProgress } from '../components/WeekProgress'
+import { weekView } from '../logic/week'
 import { HowToPanel, HowToToggle, hasHowTo } from '../components/HowTo'
 import { Banner, Button, Card, Stat, cx, fmtClock } from '../components/ui'
 import { fromKey, monthKey, shortDate } from '../lib/dates'
@@ -15,7 +17,11 @@ import type { Tab } from '../App'
 const DOW = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
 
 export function Today({ data, go }: { data: AppData; go: (t: Tab) => void }) {
-  const { today, month, prevMonth, sessions, songs, settings, todaySession, streak, weekDays, canPlayCount } = data
+  const { today, month, prevMonth, sessions, songs, settings, todaySession, streak, canPlayCount } = data
+  const week = useMemo(
+    () => weekView(new Set(sessions.map((s) => s.date)), streak.frozen, today, settings?.weeklyTargetDays ?? 5),
+    [sessions, streak.frozen, today, settings?.weeklyTargetDays],
+  )
   const [mode, setMode] = useState<SessionMode>('full')
   const run = useActive()
 
@@ -54,9 +60,10 @@ export function Today({ data, go }: { data: AppData; go: (t: Tab) => void }) {
         </button>
       </header>
 
-      <div className="grid grid-cols-3 gap-2">
+      <WeekProgress view={week} />
+
+      <div className="grid grid-cols-2 gap-2">
         <Stat label="day streak" value={streak.current} sub={streak.freezeUsedThisWeek ? 'freeze used this week' : 'freeze ready'} />
-        <Stat label="this week" value={`${weekDays}/${settings.weeklyTargetDays}`} sub="days practiced" />
         <button onClick={() => go('songs')} className="text-left">
           <Stat label="songs I can play" value={canPlayCount} sub="library →" />
         </button>
@@ -145,7 +152,7 @@ function ItemList({ items, run, onJump, songs }: { items: SessionItem[]; run?: A
                         <button
                           aria-label={done ? `Mark ${it.label} not done` : `Mark ${it.label} done`}
                           onClick={() => active.mark(it.id, done ? null : true)}
-                          className={cx('h-6 w-6 shrink-0 rounded-full border-2 grid place-items-center text-xs font-bold', done ? 'bg-good border-good text-bg' : 'border-line')}
+                          className={cx('h-6 w-6 shrink-0 rounded-full border-2 grid place-items-center text-xs font-bold', done ? 'bg-good border-good text-accent-ink' : 'border-line')}
                         >
                           {done ? '✓' : ''}
                         </button>
@@ -390,7 +397,7 @@ function DoneCard({ data }: { data: AppData }) {
   return (
     <Card className="border-good">
       <div className="flex items-center gap-3">
-        <span className="h-12 w-12 rounded-full bg-good text-bg grid place-items-center text-2xl font-bold">✓</span>
+        <span className="h-12 w-12 rounded-full bg-good text-accent-ink grid place-items-center text-2xl font-bold">✓</span>
         <div>
           <p className="font-bold text-lg">{s.mode === 'badDay' ? 'Showed up. That counts.' : 'Nice work.'}</p>
           <p className="text-sm text-muted">
