@@ -313,7 +313,7 @@ export function defaultSettings(now = Date.now()): Settings {
     remindersEnabled: false,
     sessionCapMinutes: 30,
     weeklyTargetDays: 5,
-    theme: 'spruce',
+    theme: 'stage',
     introClip: true,
     updatedAt: now,
   }

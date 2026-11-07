@@ -104,7 +104,7 @@ export interface Recording {
   updatedAt: number
 }
 
-export type Theme = 'spruce' | 'mahogany' | 'dark' | 'light' | 'system'
+export type Theme = 'stage' | 'spruce' | 'mahogany' | 'dark' | 'light' | 'system'
 
 export interface Settings {
   id: 'settings'

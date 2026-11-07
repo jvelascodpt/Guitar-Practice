@@ -254,7 +254,7 @@ function SettingsPanel({ settings }: { settings: Settings }) {
           </Button>
         </Row>
         <Row label="Theme">
-          {(['spruce', 'mahogany', 'dark', 'light', 'system'] as Theme[]).map((t) => (
+          {(['stage', 'spruce', 'mahogany', 'dark', 'light', 'system'] as Theme[]).map((t) => (
             <Chip key={t} active={settings.theme === t} onClick={() => repo.updateSettings({ theme: t })}>
               {t[0].toUpperCase() + t.slice(1)}
             </Chip>
