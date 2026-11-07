@@ -6,7 +6,7 @@ import { downloadJson, exportAll, importAll } from '../data/backup'
 import { Banner, Button, Card, Chip, SectionTitle, field } from '../components/ui'
 import { addMonths, monthKey, monthLabel, shortDate } from '../lib/dates'
 import { PLAN_START } from '../logic/plan'
-import { INTRO_CREDIT, introEvents } from '../components/IntroClip'
+import { INTRO_CREDIT, introEvents, readIntroLog } from '../components/IntroClip'
 import { notificationsSupported, reminderText, requestPermission, showReminder } from '../reminders'
 
 export function More({ data }: { data: AppData }) {
@@ -252,6 +252,7 @@ function SettingsPanel({ settings }: { settings: Settings }) {
           <Button size="sm" variant="ghost" onClick={() => introEvents.dispatchEvent(new Event('replay'))} disabled={settings.introClip === false}>
             ▶ Play intro now
           </Button>
+          <IntroDiagnostics />
         </Row>
         <Row label="Theme">
           {(['dark', 'light', 'system'] as Theme[]).map((t) => (
@@ -351,5 +352,15 @@ function Backup() {
         , via Wikimedia Commons. Trimmed to 3 s, cropped, audio removed.
       </p>
     </>
+  )
+}
+
+function IntroDiagnostics() {
+  const [log, setLog] = useState<string[]>([])
+  return (
+    <details className="w-full text-xs text-muted" onToggle={() => setLog(readIntroLog())}>
+      <summary className="cursor-pointer">Intro diagnostics</summary>
+      <pre className="mt-2 whitespace-pre-wrap rounded-lg bg-surface-2 p-2 text-[11px] leading-relaxed">{log.length ? log.join('\n') : 'No intro attempts recorded yet.'}</pre>
+    </details>
   )
 }

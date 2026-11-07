@@ -11,57 +11,89 @@ export const INTRO_CREDIT = {
 /** Lets Settings replay the intro on demand. */
 export const introEvents = new EventTarget()
 
+// ---- diagnostics: last few intro events, shown under More → Practice settings ----
+const LOG_KEY = 'gy.introLog'
+export function introLog(msg: string) {
+  try {
+    const t = new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', second: '2-digit' })
+    const prev: string[] = JSON.parse(localStorage.getItem(LOG_KEY) ?? '[]')
+    localStorage.setItem(LOG_KEY, JSON.stringify([...prev, `${t} ${msg}`].slice(-12)))
+  } catch {
+    /* storage unavailable */
+  }
+}
+export function readIntroLog(): string[] {
+  try {
+    return JSON.parse(localStorage.getItem(LOG_KEY) ?? '[]')
+  } catch {
+    return []
+  }
+}
+
 const CLIP_MS = 3_000
-/** How long to wait for a tap when the phone refuses to autoplay. */
-const BLOCKED_MS = 4_000
+/** How long the still frame waits for a tap when the clip can't autoplay. */
+const STILL_MS = 4_000
 
 const base = import.meta.env.BASE_URL
+const DIRECT = `${base}intro/shred.mp4`
 
 /**
  * 3-second muted shred clip. Tap to skip.
- * - Loaded as a blob (from the offline cache): iOS Safari can't play
- *   range-requested video out of a service-worker cache.
- * - `muted` is set as both property and attribute before play(), because
- *   iOS checks the attribute and React only sets the property.
- * - If autoplay is refused (e.g. iPhone Low Power Mode), the first frame
- *   shows with a play button; tapping plays it, since a tap is allowed.
+ * Load order: blob from the offline cache (iOS can't play range-requested
+ * video out of a service-worker cache) → plain URL if that fails. If the clip
+ * can't autoplay or can't load at all, the first frame shows with a ▶ so a tap
+ * can start it (a tap is always allowed to play media). Every step is logged.
  */
 export function IntroClip({ onDone }: { onDone: () => void }) {
   const ref = useRef<HTMLVideoElement>(null)
   const [src, setSrc] = useState<string>()
-  const [blocked, setBlocked] = useState(false)
+  const [still, setStill] = useState(false)
   const [leaving, setLeaving] = useState(false)
   const timer = useRef<number | undefined>(undefined)
+  const triedDirect = useRef(false)
 
-  const finish = () => {
+  const finish = (why: string) => {
     window.clearTimeout(timer.current)
+    introLog(`closed (${why})`)
     setLeaving(true)
     window.setTimeout(onDone, 250)
   }
-  const finishIn = (ms: number) => {
+  const finishIn = (ms: number, why: string) => {
     window.clearTimeout(timer.current)
-    timer.current = window.setTimeout(finish, ms)
+    timer.current = window.setTimeout(() => finish(why), ms)
+  }
+  const showStill = (why: string) => {
+    introLog(why)
+    setStill(true)
+    finishIn(STILL_MS, 'still frame timed out')
   }
 
   useEffect(() => {
+    introLog(`opened · ${navigator.userAgent.match(/(iPhone|iPad|Android)[^;)]*/)?.[0] ?? 'desktop'}`)
     let url: string | undefined
     let cancelled = false
-    fetch(`${base}intro/shred.mp4`)
-      .then((r) => (r.ok ? r.blob() : Promise.reject(new Error(String(r.status)))))
+    fetch(DIRECT)
+      .then((r) => (r.ok ? r.blob() : Promise.reject(new Error(`HTTP ${r.status}`))))
       .then((b) => {
         if (cancelled) return
-        url = URL.createObjectURL(b)
+        introLog(`loaded ${Math.round(b.size / 1024)} KB ${b.type || '(no type)'}`)
+        url = URL.createObjectURL(b.type ? b : new Blob([b], { type: 'video/mp4' }))
         setSrc(url)
       })
-      .catch(() => !cancelled && onDone())
+      .catch((e: Error) => {
+        if (cancelled) return
+        introLog(`load failed: ${e.message}; trying direct`)
+        triedDirect.current = true
+        setSrc(DIRECT)
+      })
     return () => {
       cancelled = true
       window.clearTimeout(timer.current)
       if (url) URL.revokeObjectURL(url)
     }
-  }, [onDone])
+  }, [])
 
-  const play = () => {
+  const play = (byTap: boolean) => {
     const v = ref.current
     if (!v) return
     v.muted = true
@@ -70,26 +102,35 @@ export function IntroClip({ onDone }: { onDone: () => void }) {
     v.setAttribute('playsinline', '')
     v.play().then(
       () => {
-        setBlocked(false)
-        finishIn(CLIP_MS + 200)
+        introLog(byTap ? 'playing (after tap)' : 'playing')
+        setStill(false)
+        finishIn(CLIP_MS + 200, 'done')
       },
-      () => {
-        setBlocked(true)
-        finishIn(BLOCKED_MS)
-      },
+      (e: DOMException) => showStill(`autoplay refused: ${e.name}`),
     )
   }
 
   useEffect(() => {
-    if (src) play()
+    if (src) play(false)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [src])
+
+  const onError = () => {
+    const code = ref.current?.error?.code
+    if (!triedDirect.current) {
+      triedDirect.current = true
+      introLog(`video error ${code ?? '?'} on cached copy; trying direct`)
+      setSrc(DIRECT)
+    } else {
+      showStill(`video error ${code ?? '?'}; showing still`)
+    }
+  }
 
   return (
     <button
       type="button"
-      aria-label={blocked ? 'Play intro' : 'Skip intro'}
-      onClick={blocked ? play : finish}
+      aria-label={still ? 'Play intro' : 'Skip intro'}
+      onClick={() => (still ? play(true) : finish('tapped'))}
       className={`fixed inset-0 z-[60] bg-black transition-opacity duration-200 ${leaving ? 'opacity-0' : 'opacity-100'}`}
     >
       <video
@@ -99,11 +140,11 @@ export function IntroClip({ onDone }: { onDone: () => void }) {
         muted
         playsInline
         preload="auto"
-        onEnded={finish}
-        onError={onDone}
+        onEnded={() => finish('ended')}
+        onError={onError}
         className="h-full w-full object-contain"
       />
-      {blocked && (
+      {still && (
         <span className="absolute inset-0 grid place-items-center" aria-hidden>
           <span className="h-20 w-20 rounded-full bg-white/90 text-black grid place-items-center text-3xl pl-1">▶</span>
         </span>
@@ -114,7 +155,7 @@ export function IntroClip({ onDone }: { onDone: () => void }) {
           <span>
             “{INTRO_CREDIT.title}” by {INTRO_CREDIT.author}, {INTRO_CREDIT.license}
           </span>
-          <span className="text-white/80 text-xs">{blocked ? 'Tap to play' : 'Tap to skip'}</span>
+          <span className="text-white/80 text-xs">{still ? 'Tap to play' : 'Tap to skip'}</span>
         </div>
       </div>
     </button>
