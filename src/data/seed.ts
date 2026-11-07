@@ -314,6 +314,7 @@ export function defaultSettings(now = Date.now()): Settings {
     sessionCapMinutes: 30,
     weeklyTargetDays: 5,
     theme: 'dark',
+    introClip: true,
     updatedAt: now,
   }
 }
