@@ -6,6 +6,7 @@ import { Banner, Button, Card, Chip, Sheet, cx, field } from '../components/ui'
 import { addDays as addDaysKey, addMonths, diffDays, monthLabel, shortDate, type DateKey } from '../lib/dates'
 import { PLAN_START } from '../logic/plan'
 import { REVIEW_INTERVALS } from '../logic/reviews'
+import { SongListen } from '../components/SongListen'
 
 const STATUS_TONE: Record<SongStatus, string> = {
   queued: 'text-muted border-line',
@@ -132,6 +133,7 @@ function SongRow({ song: s, today, onEdit }: { song: Song; today: DateKey; onEdi
           )}
         </div>
       </div>
+      <SongListen song={s} compact />
     </Card>
   )
 }
