@@ -8,7 +8,7 @@ import { Songs } from './screens/Songs'
 import { More } from './screens/More'
 import { armReminder } from './reminders'
 import { cx } from './components/ui'
-import { IntroClip, introEvents } from './components/IntroClip'
+import { IntroClip, introEvents, introLog } from './components/IntroClip'
 import { getActive } from './state/activeSession'
 
 /** Coming back after this long counts as "opening the app" (iOS resumes home-screen apps instead of relaunching). */
@@ -35,6 +35,11 @@ export default function App() {
   // Intro clip: shows on launch, and again when you come back after a while
   // (never while a practice timer is running). `intro` doubles as a remount key.
   const [intro, setIntro] = useState({ show: true, run: 1 })
+  useEffect(() => {
+    const st = data.settings
+    if (data.ready) introLog(`app started${st?.introClip === false ? ' · intro switched off in settings' : ''}${st?.onboarded ? '' : ' · setup screen'}`)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data.ready])
   const endIntro = useCallback(() => setIntro((i) => ({ ...i, show: false })), [])
   useEffect(() => {
     let hiddenAt = 0
