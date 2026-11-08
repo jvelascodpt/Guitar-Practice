@@ -8,6 +8,8 @@ describe('chord voicings', () => {
     expect(voicingFor('G')).toEqual([3, 2, 0, 0, 0, 3])
     expect(voicingFor('D7')).toEqual([null, null, 0, 2, 1, 2])
     expect(voicingFor('C#m')).toEqual([null, 4, 6, 6, 5, 4])
+    expect(voicingFor('D7sus2')).toEqual([null, null, 0, 2, 1, 0])
+    expect(voicingFor('G7sus4')).toEqual([3, 3, 0, 0, 1, 1])
   })
   it('builds power chords and barre fallbacks', () => {
     expect(voicingFor('F5')).toEqual([1, 3, 3, null, null, null])
