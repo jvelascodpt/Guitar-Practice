@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { capoOf, notesFor, parseChord, soundingName, voicingFor } from './chords'
+import { capoOf, chordTab, diagramLayout, notesFor, parseChord, soundingName, voicingFor } from './chords'
 import { seedSongs } from '../data/seed'
 
 describe('chord voicings', () => {
@@ -33,5 +33,18 @@ describe('chord voicings', () => {
   it('every chord in the song library has a voicing', () => {
     const missing = seedSongs().flatMap((s) => s.chords).filter((c) => !voicingFor(c))
     expect(missing).toEqual([])
+  })
+})
+
+describe('chord tab + diagram', () => {
+  it('writes tab high e first, x for muted', () => {
+    expect(chordTab(voicingFor('Am')!)).toEqual(['e|-0-|', 'B|-1-|', 'G|-2-|', 'D|-2-|', 'A|-0-|', 'E|-x-|'])
+    expect(chordTab(voicingFor('B♭5')!)).toEqual(['e|-x-|', 'B|-x-|', 'G|-x-|', 'D|-8-|', 'A|-8-|', 'E|-6-|'])
+  })
+  it('finds barres and the starting fret', () => {
+    expect(diagramLayout(voicingFor('F')!)).toEqual({ base: 1, barre: { fret: 1, from: 0, to: 5 } })
+    expect(diagramLayout(voicingFor('Am')!)).toEqual({ base: 1, barre: null })
+    expect(diagramLayout(voicingFor('B♭5')!).base).toBe(6)
+    expect(diagramLayout(voicingFor('C#m')!)).toEqual({ base: 4, barre: { fret: 4, from: 1, to: 5 } })
   })
 })

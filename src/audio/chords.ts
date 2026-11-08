@@ -108,3 +108,29 @@ export function soundingName(name: string, capo: number): string {
   if (!p) return name
   return SHARP_NAMES[(p.root + capo) % 12] + p.quality
 }
+
+const STRING_NAMES = ['E', 'A', 'D', 'G', 'B', 'e']
+
+/** Tab for one chord, high e on top: ["e|-0-", "B|-1-", …, "E|-x-"]. */
+export function chordTab(v: Voicing): string[] {
+  const cells = v.map((f) => (f === null ? 'x' : String(f)))
+  const w = Math.max(...cells.map((c) => c.length))
+  return cells
+    .map((c, i) => `${STRING_NAMES[i]}|-${c.padStart(w, '-')}-|`)
+    .reverse()
+}
+
+/** Diagram layout: first fret shown, and an optional barre (fret + string span). */
+export function diagramLayout(v: Voicing) {
+  const fretted = v.filter((f): f is number => f !== null && f > 0)
+  const maxF = fretted.length ? Math.max(...fretted) : 0
+  const minF = fretted.length ? Math.min(...fretted) : 0
+  const base = maxF <= 4 ? 1 : minF
+  // Barre: the lowest fretted fret is held on 2+ strings, running through to the high e.
+  let barre: { fret: number; from: number; to: number } | null = null
+  if (minF > 0) {
+    const idx = v.map((f, i) => (f === minF ? i : -1)).filter((i) => i >= 0)
+    if (idx.length >= 2 && v[5] === minF) barre = { fret: minF, from: idx[0], to: 5 }
+  }
+  return { base, barre }
+}

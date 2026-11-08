@@ -3,6 +3,7 @@ import type { Song } from '../data/types'
 import { capoOf, soundingName, voicingFor } from '../audio/chords'
 import { getPlayingSongId, playChords, stopChords, usePlayer } from '../audio/guitar'
 import { cx } from './ui'
+import { ChordDiagram } from './ChordDiagram'
 
 export const coverSearch = (s: Song) =>
   `https://www.youtube.com/results?search_query=${encodeURIComponent(`${s.title} ${s.artist.split(/ ft\.| &/)[0]} electric guitar cover`)}`
@@ -38,7 +39,18 @@ export function SongListen({ song, compact }: { song: Song; compact?: boolean })
         </a>
       </div>
       {playing && (
-        <div className="flex flex-wrap items-center gap-1.5 text-xs" aria-live="polite">
+        <div className="rounded-xl bg-surface-2 border border-line p-3 flex items-center justify-between gap-2" aria-live="polite">
+          <ChordDiagram name={playable[Math.max(0, player.chord)]} capo={capo} />
+          {playable.length > 1 && (
+            <div className="text-right text-xs text-muted shrink-0">
+              Next
+              <div className="font-display text-xl text-ink">{playable[(Math.max(0, player.chord) + 1) % playable.length]}</div>
+            </div>
+          )}
+        </div>
+      )}
+      {playing && (
+        <div className="flex flex-wrap items-center gap-1.5 text-xs">
           {playable.map((c, i) => (
             <span key={`${c}-${i}`} className={cx('rounded-md px-2 py-1 font-semibold tabular', i === player.chord ? 'bg-accent text-accent-ink' : 'bg-surface-2 text-muted')}>
               {c}
