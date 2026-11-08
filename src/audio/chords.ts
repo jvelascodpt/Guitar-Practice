@@ -42,6 +42,8 @@ const OPEN: Record<string, Voicing> = {
   Asus4: [x, 0, 2, 2, 3, 0],
   Dsus2: [x, x, 0, 2, 3, 0],
   Dsus4: [x, x, 0, 2, 3, 3],
+  D7sus2: [x, x, 0, 2, 1, 0],
+  G7sus4: [3, 3, 0, 0, 1, 1],
 }
 
 const PC: Record<string, number> = { C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11 }

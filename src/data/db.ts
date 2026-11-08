@@ -31,8 +31,8 @@ export class GuitarDB extends Dexie {
         await songs.bulkDelete(stale.map((s) => s.id))
         await tx.table('deletions').bulkPut(stale.map((s) => ({ id: `songs:${s.id}`, table: 'songs', recordId: s.id, deletedAt: now })))
         const maxOrder = (await songs.toArray()).reduce((m, s) => Math.max(m, s.order), 0)
-        // (the Cult of Personality songs are added by v5, at the front of the queue)
-        await songs.bulkAdd(seedSongs(now, maxOrder + 1).filter((s) => !s.id.startsWith('seed-cult-')))
+        // (songs added later, e.g. Cult of Personality and Daughters, come from their own versions)
+        await songs.bulkAdd(seedSongs(now, maxOrder + 1).filter((s) => s.id.startsWith('seed-v2-')))
       })
     // v3: the wood "Spruce" theme replaces the old dark default (explicit
     // light/system choices are kept).
@@ -70,6 +70,17 @@ export class GuitarDB extends Dexie {
         const minOrder = all.reduce((m, s) => Math.min(m, s.order), 1)
         const maxOrder = all.reduce((m, s) => Math.max(m, s.order), 0)
         await songs.bulkAdd(fresh.map((s) => ({ ...s, order: s.id === 'seed-cult-riff' ? minOrder - 1 : maxOrder + 1 })))
+      })
+    // v6: Daughters (easy strum version), queued with the January songs.
+    this.version(6)
+      .stores({})
+      .upgrade(async (tx) => {
+        const songs = tx.table<Song, string>('songs')
+        const all = await songs.toArray()
+        if (all.some((s) => s.id === 'seed-daughters')) return
+        const song = seedSongs(Date.now()).find((s) => s.id === 'seed-daughters')!
+        const lastJan = all.filter((s) => s.targetMonth <= song.targetMonth).reduce((m, s) => Math.max(m, s.order), 0)
+        await songs.add({ ...song, order: lastJan + 0.5 })
       })
     this.on('populate', (tx) => {
       const now = Date.now()

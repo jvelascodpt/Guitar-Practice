@@ -298,6 +298,20 @@ export const SONGS: SongSeed[] = [
   { title: 'Love Yourself', artist: 'Justin Bieber', difficulty: 2, chords: ['C', 'G', 'Am', 'F'], techniques: ['Capo 4', 'Strumming'], tier: 'easy', targetMonth: 2, tags: ['pop'], notes: `Capo 4, easy-shapes version. ${F_TIP}`, link: chordsSearch('Love Yourself Justin Bieber') },
   { title: 'Gravity (rhythm part)', artist: 'John Mayer', difficulty: 2, chords: ['G', 'C', 'Am', 'D7'], techniques: ['6/8 feel', 'Slow strumming'], tier: 'easy', targetMonth: 2, tags: ['blues'], notes: 'Mostly G and C at a slow 6/8 sway. Learn this before the solo in May.', link: lesson('Gravity John Mayer') },
   { title: 'Scared to Be Lonely', artist: 'Martin Garrix & Dua Lipa', difficulty: 2, chords: ['F', 'Am', 'G', 'Em'], techniques: ['Capo 4', '4-chord loop'], tier: 'easy', targetMonth: 2, tags: ['edm'], notes: `Capo 4 version. ${F_TIP} ${CHECK}`, link: chordsSearch('Scared to Be Lonely Martin Garrix') },
+  {
+    id: 'seed-daughters',
+    title: 'Daughters (easy strum version)',
+    artist: 'John Mayer',
+    difficulty: 3,
+    chords: ['Am7', 'D7sus2', 'G7sus4', 'C'],
+    techniques: ['Capo 2', 'Swung strum D-D-U-D-U', 'Open 7sus chords'],
+    tier: 'easy',
+    targetMonth: 2,
+    tags: ['acoustic', 'pop'],
+    notes:
+      'Capo 2, easy strummed version: Am7 → D7sus2 → G7sus4 → C with a lazy, swung D-D-U-D-U. Sounds in B minor like the record. The original is fingerpicked with a thumb slap (intermediate; some players use open G tuning), a great stretch goal later in the year.',
+    link: lesson('Daughters John Mayer easy'),
+  },
   // Feb: muting & riffs
   { title: 'Uptown Funk', artist: 'Mark Ronson ft. Bruno Mars', difficulty: 2, chords: ['Dm7', 'G7'], techniques: ['Funk muting', 'Short chord stabs'], tier: 'easy', targetMonth: 3, tags: ['pop', 'funk'], notes: 'Two chords; the groove is the hard part. Play the stabs short and mute in between.', link: lesson('Uptown Funk Mark Ronson Bruno Mars') },
   { title: 'Animals (lead riff)', artist: 'Martin Garrix', difficulty: 2, chords: [], techniques: ['Single-note riff', 'Palm muting'], tier: 'easy', targetMonth: 3, tags: ['edm'], notes: 'The synth hook arranged for guitar. Slow it right down, then build to tempo.', link: lesson('Animals Martin Garrix') },
